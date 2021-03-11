@@ -101,11 +101,11 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary',
-    'classes_auth_header' => '',
+    'classes_auth_card' => '',
+    'classes_auth_header' => 'bg-gradient-info',
     'classes_auth_body' => '',
-    'classes_auth_footer' => '',
-    'classes_auth_icon' => '',
+    'classes_auth_footer' => 'text-center',
+    'classes_auth_icon' => 'fa-lg text-info',
     'classes_auth_btn' => 'btn-flat btn-primary',
 
     /*
@@ -226,7 +226,7 @@ return [
     'menu' => [
         [
             'text' => 'search',
-            'search' => true,
+            'search' => false,
             'topnav' => true,
         ],
         [
@@ -240,16 +240,26 @@ return [
             'icon'=> 'fas fa-fw fa-home',
         ],
         [
-            'text'        => 'pages',
-            'url'         => 'admin/pages',
+            'text'        => 'Usuarios',
+            'url'         => 'users',
             'icon'        => 'far fa-fw fa-file',
-            'label'       => 4,
+            'label'       => 'Nuevo',
             'label_color' => 'success',
         ],
-        ['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url'  => 'admin/settings',
+            'text'        => 'Archivos',
+            'url'         => 'files',
+            'icon'        => 'far fa-fw fa-file',
+            'label'       => 'Nuevo',
+            'label_color' => 'success',
+        ],
+        
+
+
+        /*['header' => 'Configuración de la cuenta'],
+        [
+            'text' => 'Perfil de usuario',
+            'url'  => 'user/profile',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
@@ -310,7 +320,7 @@ return [
             'text'       => 'information',
             'icon_color' => 'cyan',
             'url'        => '#',
-        ],
+        ],*/
     ],
 
     /*
