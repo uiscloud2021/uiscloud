@@ -3,21 +3,32 @@
 @section('title', 'Usuarios')
 
 @section('content_header')
-    <h1>Listado de Usuarios</h1>
+<h4 class="m-0">Lista de Usuarios</h4>
 @stop
 
 @section('content')
-<a href="users/create" class="btn btn-primary mb-3">Nuevo</a> 
 
+@if (session('info'))
+    <div class="alert alert-success"><strong>{{session('info')}}</strong></div>
+@endif
+
+<div class="card">
+
+<div class="card-header">
+    <a href="{{route('users.create')}}" class="btn btn-secondary">Agregar usuario</a> 
+</div>
+
+<div class="card-body">
 <table id="users" class="table table-striped table-bordered shadow-lg mt-4" style="width:100%">
     <thead class="bg-primary text-white">
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Nombre</th>
             <th scope="col">Correo</th>
-            <th scope="col">Rol</th>
             <th scope="col">Puesto</th>
-            <th scope="col">Acciones</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -26,20 +37,22 @@
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
-                <td>{{ $user->role }}</td>
                 <td>{{ $user->position }}</td>
-                <td>
-                <form action="{{route('users.destroy',$user->id)}}" method="POST">
-                    <a href="/users/{{$user->id}}/edit" class="btn btn-info">Editar</a>
+                <td>{{ $user->phone }}</td>
+                <td width="10px"><a class="btn btn-info btn-sm" href="{{route('users.edit', $user)}}">Editar</a></td>
+                <td width="10px">
+                <form action="{{route('users.destroy',$user)}}" method="POST">
                     @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    @method('delete')
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                 </form>
                 </td>
             </tr>
         @endforeach
     </tbody>
 </table>
+</div>
+</div>
 @stop
 
 @section('css')

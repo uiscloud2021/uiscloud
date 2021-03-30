@@ -10,6 +10,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
+use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -17,6 +19,7 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +30,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'position',
+        'phone',
     ];
 
     /**
@@ -69,5 +74,27 @@ class User extends Authenticatable
 
     public function adminlte_profile_url(){ //metodo para perfil de usuario
         return "profile/username";
+    }
+
+    //RELACION MUCHOS A MUCHOS
+    public function files(){
+        return $this->belongsToMany(File::class);
+    }
+
+    public function categories(){
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function folders(){
+        return $this->belongsToMany(Folder::class);
+    }
+
+    //RELACION UNO A MUCHOS
+    public function filies(){
+        return $this->hasMany(File::class);
+    }
+
+    public function foldiers(){
+        return $this->hasMany(Folder::class);
     }
 }

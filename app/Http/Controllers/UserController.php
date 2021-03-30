@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 
+use Spatie\Permission\Models\Role;
+
 class UserController extends Controller
 {
     //CONSTRUCTOR PARA PROTEGER FILES SOLO PARA LOGEADOS
     public function __construct(){
-        $this->middleware('auth');
+        //PROTEGRE LAS RUTAS POR EL CONTROLADOR DEPENDIENDO DE ROLES Y PERMISOS
+        $this->middleware('can:users.index');//PROTEGE TODAS LAS RUTAS
+        //$this->middleware('can:users.index')->only('index');//SOLO PROTEGE LO QUE ESPECIFIQUEMOS
     }
     /**
      * Display a listing of the resource.
@@ -19,7 +23,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();//Trae todos los registros de la tabla
-        return view('user.index')->with('users', $users);//le pasamos la variable articulos a nuestro index
+        return view('user.index', compact('users'));//le pasamos la variable articulos a nuestro index
     }
 
     /**
@@ -29,7 +33,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('user.create');
+        $roles = Role::all();//PARA SELECT
+        return view('user.create', compact('roles'));
     }
 
     /**
@@ -40,18 +45,30 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        //VALIDAR CAMPOS
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|unique:users',
+            'password' => 'required',
+            'role' => 'required',
+            'position' => 'required',
+            'phone' => 'required'
+        ]);
+        
         //GUARDAR REGISTROS
         $users = new User();
-        $users -> name = $request->get('nombre');
+        $users -> name = $request->get('name');
         $users -> email = $request->get('email');
-        $users -> password = $request->get('contrasena');
-        $users -> role = $request->get('rol');
-        $users -> position = $request->get('puesto');
-        $users -> phone = $request->get('telefono');
+        $users -> password = bcrypt($request->get('password'));
+        $users -> position = $request->get('position');
+        $users -> phone = $request->get('phone');
         //guarda
         $users -> save();
-        //redirecciona a pagina index
-        return redirect('/users');
+
+        if($request->role){
+            $users->roles()->attach($request->role);//GUARDAR LAS RELACIONES ROLES
+        }
+        return redirect()->route('users.edit', $users)->with('info', 'El usuario se creó correctamente');
 
     }
 
@@ -61,7 +78,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
         //
     }
@@ -72,10 +89,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        $user = User::find($id);//Trae un registro de la tabla
-        return view('user.edit')->with('user', $user);
+        $roles = Role::all();//PARA SELECT
+        return view('user.edit', compact('user', 'roles'));
     }
 
     /**
@@ -85,19 +102,43 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        //GUARDAR CAMBIOS
-        $user = User::find($id);
-        $user -> name = $request->get('nombre');
-        $user -> email = $request->get('email');
-        $user -> role = $request->get('rol');
-        $user -> position = $request->get('puesto');
-        $user -> phone = $request->get('telefono');
+        //VALIDAR CAMPOS
+        $request->validate([
+            'name' => 'required',
+            'email' => "required|unique:users,email,$user->id",
+            'role' => 'required',
+            'position' => 'required',
+            'phone' => 'required'
+        ]);
+        
+        //CONDICION PARA GUARDAR CAMBIO DE PASSWORD
+        $pw_prev = $request->get('password');
+        $pw_new = $request->get('new_password');
+        if($pw_new==""){
+            $pw=$pw_prev;
+        }else{
+            $pw_new = bcrypt($request->get('new_password'));
+            $pw=$pw_new;
+        }
+
+        //GUARDAR Cambios
+        $users = User::find($user->id);
+        $users -> name = $request->get('name');
+        $users -> email = $request->get('email');
+        //$users -> password = bcrypt($request->get('new_password'));
+        $users -> password = $pw;
+        $users -> position = $request->get('position');
+        $users -> phone = $request->get('phone');
         //guarda
-        $user -> save();
-        //redirecciona a pagina index
-        return redirect('/users');
+        $users -> save();
+
+        if($request->role){
+            $users->roles()->sync($request->role);//CAMBIOS EN TABLA RELACION ROLES
+        }
+        //redirecciona a pagina edit
+        return redirect()->route('users.edit',$user)->with('info', 'El usuario se modificó correctamente');
     }
 
     /**
@@ -106,10 +147,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::find($id);
         $user->delete();
-        return redirect('/users');
+        return redirect()->route('users.index',$user)->with('info', 'El usuario se eliminó correctamente');;
     }
 }

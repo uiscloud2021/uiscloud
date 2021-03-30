@@ -235,92 +235,63 @@ return [
             'can'  => 'manage-blog',
         ],
         [
-            'text' => 'Inicio',
+            'text' => 'Servidor UIS',
             'route'  => 'dashboard',
-            'icon'=> 'fas fa-fw fa-home',
+            'icon'=> 'fas fa-fw fa-server',
+            'can'  => 'dashboard',
         ],
         [
-            'text'        => 'Usuarios',
-            'url'         => 'users',
-            'icon'        => 'far fa-fw fa-file',
-            'label'       => 'Nuevo',
-            'label_color' => 'success',
+            'text'        => 'Inicio',
+            'url'         => 'home',
+            'icon'        => 'fas fa-fw fa-chart-line',
+            'can'  => 'home.index',
         ],
-        [
+       /* [
             'text'        => 'Archivos',
             'url'         => 'files',
             'icon'        => 'far fa-fw fa-file',
             'label'       => 'Nuevo',
             'label_color' => 'success',
-        ],
-        
-
-
-        /*['header' => 'Configuración de la cuenta'],
-        [
-            'text' => 'Perfil de usuario',
-            'url'  => 'user/profile',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text'    => 'multilevel',
-            'icon'    => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url'  => '#',
-                ],
-                [
-                    'text'    => 'level_one',
-                    'url'     => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url'  => '#',
-                        ],
-                        [
-                            'text'    => 'level_two',
-                            'url'     => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url'  => '#',
-                ],
-            ],
-        ],
-        ['header' => 'labels'],
-        [
-            'text'       => 'important',
-            'icon_color' => 'red',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'warning',
-            'icon_color' => 'yellow',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'information',
-            'icon_color' => 'cyan',
-            'url'        => '#',
         ],*/
+        
+        ['header' => 'Solo administradores',
+        'can'  => 'users.index',],
+        [
+            'text' => 'Usuarios',
+            'url'  => 'users',
+            'icon' => 'fas fa-fw fa-users',
+            'active' => ['users*'],
+            'can'  => 'users.index',
+        ],
+        [
+            'text' => 'Roles y permisos',
+            'url'  => 'roles',
+            'icon' => 'fas fa-fw fa-lock',
+            'active' => ['roles*'],
+            'can'  => 'roles.index',
+        ],
+        [
+            'text' => 'Directorios',
+            'url'  => 'categories',
+            'icon' => 'fab fa-fw fa-buffer',
+            'active' => ['categories*'],
+            'can'  => 'categories.index',
+        ],
+        [
+            'text' => 'Archivos',
+            'url'  => 'files',
+            'icon' => 'fas fa-fw fa-file',
+            'active' => ['files*'],
+            'can'  => 'files.index',
+            
+        ],
+        [
+            'text' => 'Papelera',
+            'url'  => 'recycleds',
+            'icon' => 'fas fa-fw fa-trash-alt',
+            'active' => ['recycleds*'],
+            'can'  => 'recycleds.index',
+        ],
     ],
 
     /*

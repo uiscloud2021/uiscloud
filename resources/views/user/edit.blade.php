@@ -3,36 +3,82 @@
 @section('title', 'Usuarios')
 
 @section('content_header')
-    <h1>Editar usuario</h1>
+<h4 class="m-0">Editar Usuario</h4>
 @stop
 
 @section('content')
-    <form action="/users/{{$user->id}}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="mb-3">
-            <label for="" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" value="{{$user->name}}" tabindex="1">
+@if (session('info'))
+    <div class="alert alert-success"><strong>{{session('info')}}</strong></div>
+@endif
+<div class="card">
+        <div class="card-body">
+            {!! Form::model($user, ['route' => ['users.update', $user], 'method' => 'put']) !!}
+
+                <div class="form-group">
+                    {!! Form::label('name', 'Nombre', ['class' => 'form-label']) !!}
+                    {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el nombre del usuario']) !!}
+                
+                    @error('name')
+                        <span class="text-danger">{{$message}}</span>
+                    @enderror
+                
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('email', 'Correo electrónico', ['class' => 'form-label']) !!}
+                    {!! Form::text('email', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el correo electrónico']) !!}
+                
+                    @error('email')
+                        <span class="text-danger">{{$message}}</span>
+                    @enderror
+                
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('password', 'Nueva contraseña', ['class' => 'form-label']) !!}
+                    {!! Form::hidden('password', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('new_password', null, ['class' => 'form-control', 'placeholder' => 'Ingrese la nueva contraseña']) !!}
+                
+                    @error('password')
+                        <span class="text-danger">{{$message}}</span>
+                    @enderror
+                
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('role', 'Listado de roles', ['class' => 'form-label']) !!}
+
+                    @foreach ($roles as $role)
+                        <div>
+                            <label>
+                                {!! Form::checkbox('role[]', $role->id, $user->hasRole($role->id), null, ['class' => 'mr-1']) !!}
+                                {{$role->name}}
+                            </label>
+                        </div>
+                    @endforeach
+                
+                    @error('role')
+                        <span class="text-danger">{{$message}}</span>
+                    @enderror
+                
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('position', 'Puesto', ['class' => 'form-label']) !!}
+                    {!! Form::text('position', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el puesto']) !!}
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('phone', 'Teléfono', ['class' => 'form-label']) !!}
+                    {!! Form::text('phone', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el teléfono']) !!}
+                </div>
+
+                <a href="/users" class="btn btn-secondary">Cancelar</a>
+                {!! Form::submit('Guardar cambios', ['class' => 'btn btn-primary']) !!}
+
+            {!! Form::close() !!}
         </div>
-        <div class="mb-3">
-            <label for="" class="form-label">Correo electrónico</label>
-            <input type="text" class="form-control" id="email" name="email" value="{{$user->email}}" tabindex="2">
-        </div>
-        <div class="mb-3">
-            <label for="" class="form-label">Rol</label>
-            <input type="text" class="form-control" id="rol" name="rol" value="{{$user->role}}" tabindex="3">
-        </div>
-        <div class="mb-3">
-            <label for="" class="form-label">Puesto</label>
-            <input type="text" class="form-control" id="puesto" name="puesto" value="{{$user->position}}" tabindex="4">
-        </div>
-        <div class="mb-3">
-            <label for="" class="form-label">Teléfono</label>
-            <input type="text" class="form-control" id="telefono" name="telefono" value="{{$user->phone}}" tabindex="5">
-        </div>
-        <a href="/users" class="btn btn-secondary" tabindex="6">Cancelar</a> 
-        <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-    </form>
+    </div>
 @stop
 
 @section('css')
