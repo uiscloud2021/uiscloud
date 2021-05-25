@@ -250,7 +250,8 @@ class DashController extends Controller
             
             if($archivo_new!=""){
                 //GUARDAR ARCHIVO NUEVO EN S3
-                $path = $request->file('archivo_editf')->store(path: $folder_prev, options: 's3');
+                //$path = $request->file('archivo_editf')->store(path: $folder_prev, options: 's3');
+                $path = $request->file('archivo_editf')->store($folder_prev, 's3');
                 $extension = $request->file('archivo_editf')->extension();
                 $filename = $files -> filename = basename($path);
                 $files -> url = Storage::disk(name: 's3')->url($path);
