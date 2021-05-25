@@ -14,20 +14,27 @@ class File extends Model
 
     //RELACION MUCHOS A MUCHOS EN TABLAS
     public function users(){
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class,'file_user')
+            ->withPivot('user_id');
     }
 
-    public function folders(){
-        return $this->belongsToMany(Folder::class);
-    }
+    //RELACION DE UNO A MUCHOS
+    /*public function folders(){
+        return $this->hasMany(Folder::class,'id_folder');
+    }*/
 
     //RELACION UNO A MUCHOS INVERSA EN TABLAS
     public function useris(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'id_user');
     }
 
     public function categories(){
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class,'category_id');
+    }
+
+    public function logs(){
+        return $this->belongsTo(Log::class,'files')
+        ->withPivot('file_id');;
     }
 }
 

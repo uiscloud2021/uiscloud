@@ -286,6 +286,13 @@ return [
             
         ],
         [
+            'text' => 'Archivos modificados',
+            'url'  => 'logs',
+            'icon' => 'fas fa-fw fa-file',
+            'active' => ['logs*'],
+            'can'  => 'logs.index',
+        ],
+        [
             'text' => 'Papelera',
             'url'  => 'recycleds',
             'icon' => 'fas fa-fw fa-trash-alt',

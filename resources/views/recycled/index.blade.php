@@ -40,27 +40,35 @@
 
 <div class="card-body">
 
-<table id="icons" class="table" style="width:100%">
+<table id="icons" class="table-responsive" style="width:100%">
+<?php
+    $cont=0;
+?>
     <tbody>
-        <tr>
             @foreach ($recycleds as $recycled)
-            
+
+                <?php
+                $cont++;
+                if($cont % 7 == 0){
+                    echo '<tr></tr>';
+                }
+                ?>
                 <td><a target="_blank" href="{{$recycled->url_new}}"><img src="vendor/adminlte/dist/img/icons/{{$recycled->type}}.png" width="10%" heigth="10%"><br/>
                 {{ $recycled->name }}.{{ $recycled->type }}</a></td>
             
             @endforeach
-        </tr>
     </tbody>
 </table>
 
-<div id="lists" style="display:none">
+<div id="lists" class="table-responsive" style="display:none">
 <table id="list" class="table table-striped table-bordered shadow-lg mt-4" style="width:100%;">
     <thead class="bg-primary text-white">
         <tr>
             <th scope="col"></th>
             <th scope="col">Nombre</th>
             <th scope="col">Fecha de modificación</th>
-            <th scope="col">Ruta anterior</th>
+            <th scope="col">Directorio anterior</th>
+            <th scope="col">Versión</th>
             <th scope="col">Usuario</th>
             <th scope="col"></th>
         </tr>
@@ -72,6 +80,7 @@
                 <td><a target="_blank" href="{{$recycled->url_new}}">{{ $recycled->name }}</a></td>
                 <td>{{ $recycled->created_at }}</td>
                 <td>{{ $recycled->category }}</td>
+                <td>{{ $recycled->version }}</td>
                 <td>{{ $recycled->user }}</td>
                 <td width="10px"><a class="btn btn-info btn-sm" target="_blank" href="{{$recycled->url_new}}">Descargar</a></td>
             </tr>
@@ -85,7 +94,7 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+    <!--<link rel="stylesheet" href="/css/admin_custom.css">-->
     <link href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 @stop
 
@@ -96,7 +105,8 @@
     <script>
     $(document).ready(function() {
         $('#list').DataTable({
-            "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]]
+            "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]],
+            "language": espanol
         });
     } );
 
@@ -109,5 +119,34 @@
         $('#lists').hide(500);
         $('#icons').show(1500);
     }
+
+    let espanol = {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ registros",
+        "sZeroRecords":    "No se encontraron resultados",
+        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix":    "",
+        "sSearch":         "Buscar:",
+        "sUrl":            "",
+        "sInfoThousands":  ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+            "sFirst":    "Primero",
+            "sLast":     "Último",
+            "sNext":     "Siguiente",
+            "sPrevious": "Anterior"
+        },
+        "oAria": {
+            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        },
+        "buttons": {
+            "copy": "Copiar",
+            "colvis": "Visibilidad"
+        }
+    };
     </script>
 @stop

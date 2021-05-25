@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Recycled;
+use App\Models\Log;
 use Storage;
 use Carbon\Carbon;
 
@@ -64,6 +65,7 @@ class FileController extends Controller
         $path = $request->file('archivo')->store(path: $folder, options: 's3');
         //$path = $request->file('archivo')->store($folder);
         $extension = $request->file('archivo')->extension();
+        $version="1";
         //GUARDAR REGISTROS
         $files = new File();
         $files -> name = $request->get('name');
@@ -71,7 +73,8 @@ class FileController extends Controller
         $files -> url = Storage::disk(name: 's3')->url($path);
         $files -> size = Storage::disk(name: 's3')->size($path);
         $files -> type = $extension;
-        $files -> user_id = $request->get('user_id');
+        $files -> version = $version;
+        $files -> id_user = $request->get('user_id');
         $files -> category_id = $request->get('category_id');
         
         //GUARDAR
@@ -127,21 +130,22 @@ class FileController extends Controller
         $request->validate([
             'name' => "required|unique:files,name,$file->id",
             'category_id' => 'required',
-            'users' => 'required'
+            'users' => 'required',
+            'versionamiento' => 'required'
         ]);
+
+        $current_user = auth()->id();
 
         //ALMACENAR EN VARIABLE EL ARCHIVO Y LA URL
         $archivo_prev = $file->filename;
         $category_prev = $file->category_id;
-        $user_prev = $file->user_id;
+        $iduser_prev = $file->id_user;
+
+        $block=$request->get('bloqueado');
 
         //CONSULTA PARA CARPETA ANTERIOR
         $name_category_prev = Category::where('id', '=', $category_prev)->get()->first();
         $folder_prev = $name_category_prev->name;
-
-        //CONSULTA PARA EL USUARIO
-        $name_user_prev = User::where('id', '=', $user_prev)->get()->first();
-        $user_prev = $name_user_prev->name;
 
         //LE PASO EL NOMBRE DE LA CARPETA EN CASO DE CAMBIO
         $category_id = $request->get('category_id');
@@ -153,30 +157,30 @@ class FileController extends Controller
         if($archivo_new!=""){
             //NOMBRE NUEVO DE ARCHIVO
             $fecha=Carbon::now();
-            //MOVER ARCHIVO A RECYCLED
-            $recycled = Storage::move($folder_prev.'/'.$archivo_prev, 'Recycled/'.$fecha.$archivo_prev);
-            //NUEVA URL EN RECYCLED
-            $url_new = Storage::url('Recycled/'.$fecha.$archivo_prev);
-            
-            //GUARDAR ARCHIVO ANTERIOR EN RECYCLED
-            $recycled = new Recycled();
-            $recycled->name = $file->name;
-            $recycled->filename = $file->filename;
-            $recycled->url = $file->url;
-            $recycled->url_new = $url_new;
-            $recycled->size = $file->size;
-            $recycled->type = $file->type;
-            $recycled->user = $user_prev;
-            $recycled->category = $folder_prev;
-            $recycled->folder = $folder_prev;
+            //MOVER ARCHIVO A MODIFICADOS
+            $modified = Storage::move($folder_prev.'/'.$archivo_prev, 'Modified/'.$fecha.$archivo_prev);
+            //NUEVA URL EN MODIFICADOS
+            $url_new = Storage::url('Modified/'.$fecha.$archivo_prev);
+
+            //GUARDAR DATOS EN TABLA LOGS MODIFICADOS
+            $log = new Log();
+            $log->directory = $folder_prev;
+            $log->details = $request->get('details');
+            $log->filename = $file->filename;
+            $log->url = $url_new;
+            $log->size = $file->size;
+            $log->type = $file->type;
+            $log->version = $file->version;
+            $log->user_id = $file->id_user;
+            $log->file_id = $file->id;
             // Guardar
-            $recycled->save();
+            $log->save();
         }
 
         //GUARDAR CAMBIOS
         $files = File::find($file->id);
         $files -> name = $request->get('name');
-
+        $version = $file->version + 1;
         if($archivo_new!=""){
             //GUARDAR ARCHIVO NUEVO EN S3
             $path = $request->file('archivo')->store(path: $folder, options: 's3');
@@ -185,10 +189,16 @@ class FileController extends Controller
             $files -> url = Storage::disk(name: 's3')->url($path);
             $files -> size = Storage::disk(name: 's3')->size($path);
             $files -> type = $extension;
+            $files -> version = $version;
         }
-
-        //$files -> user_id = $request->get('user_id');
+        $files -> id_user = $current_user;
         $files -> category_id = $request->get('category_id');
+        $files -> versionamiento = $request->get('versionamiento');
+        $files -> bloqueado = $block;
+        if($block==0){
+            $files -> user_block = "";
+        }
+        
         //guarda
         $files -> save();
 
@@ -213,7 +223,7 @@ class FileController extends Controller
         //ALMACENAR EN VARIABLE EL ARCHIVO Y LA URL
         $archivo_prev = $file->filename;
         $category_prev = $file->category_id;
-        $user_prev = $file->user_id;
+        $user_prev = $file->id_user;
 
         //CONSULTA PARA CARPETA ANTERIOR
         $name_category_prev = Category::where('id', '=', $category_prev)->get()->first();
@@ -238,6 +248,7 @@ class FileController extends Controller
         $recycled->url_new = $url_new;
         $recycled->size = $file->size;
         $recycled->type = $file->type;
+        $recycled->version = $file->version;
         $recycled->user = $user_prev;
         $recycled->category = $folder_prev;
         $recycled->folder = $folder_prev;

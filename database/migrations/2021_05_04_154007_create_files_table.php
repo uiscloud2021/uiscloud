@@ -20,12 +20,18 @@ class CreateFilesTable extends Migration
             $table->string('url',200);
             $table->string('size',50);
             $table->string('type',50);
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('version');
+            $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('category_id');
+            $table->string('versionamiento',10);
+            $table->enum('bloqueado', [0, 1])->default(0);
+            $table->string('user_block',200);
+            $table->unsignedBigInteger('id_folder');
+            $table->unsignedBigInteger('nivel');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            //$table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('id_user')->references('id')->on('users');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

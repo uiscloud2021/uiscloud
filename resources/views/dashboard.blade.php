@@ -14,7 +14,7 @@
             
           </div><!-- /.col -->
         </div><!-- /.row -->
-    </div>
+</div>
 @stop
 
 @section('content')
@@ -40,21 +40,32 @@
 
 <div class="card-body">
 
-<div id="icons">
+<div class="table-responsive" id="icons">
 <table id="icon" class="table" style="width:100%">
+<?php
+    $cont=0;
+?>
     <tbody>
-        <tr>
             @foreach ($categories as $category)
                 <form action="{{route('dashboard')}}" method="POST">
                     @csrf
-                    <input type="hidden" value="{{$category->id}}" name="selected_category">
+                    <input type="hidden" value="{{$category->id}}" name="id_category">
                     <input type="hidden" value="{{$category->name}}" name="name_category">
-
-                    <td><button style="background-color: Transparent; border: none; outline:none;" type="submit"><img src="vendor/adminlte/dist/img/icons/folder{{$category->contenido}}.png" width="70%" heigth="70%"><br/>{{ $category->name }}</button></td>
+                    <input type="hidden" value="0" name="nivel_folder">
+                    <?php
+                    $cont++;
+                    if($cont % 7 == 0){
+                        echo '<tr></tr>';
+                    }
+                    ?>
+                    <td><button style="background-color: Transparent; border: none; outline:none;" type="submit">
+                        <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/folder{{$category->contenido}}.png" width="60%" heigth="60%">
+                        </button><br/>
+                        <span style="vertical-align: middle; float: left;">{{$category->name}}</span>
+                    </td>
                 
                 </form>
             @endforeach
-        </tr>
     </tbody>
 </table>
 </div>
@@ -62,7 +73,7 @@
 
 
 
-<div id="lists" style="display:none">
+<div class="table-responsive" id="lists" style="display:none">
 <table id="list" class="table table-striped table-bordered shadow-lg mt-4" style="width:100%;">
     <thead class="bg-primary text-white">
         <tr>
@@ -78,8 +89,9 @@
                 
                 <form action="{{route('dashboard')}}" method="POST">
                     @csrf
-                    <input type="hidden" value="{{$category->id}}" name="selected_category">
-                    <input type="hidden" value="{{$category->name}}" name="name_category">    
+                    <input type="text" value="{{$category->id}}" name="id_category">
+                    <input type="hidden" value="{{$category->name}}" name="name_category"> 
+                    <input type="hidden" value="0" name="nivel_folder">   
                     
                     <td><button style="background-color: Transparent; border: none; outline:none;" type="submit">{{ $category->name }}</button></td>
                 </form>
@@ -96,7 +108,7 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+    <!--<link rel="stylesheet" href="/css/admin_custom.css">-->
     <link href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 @stop
 
@@ -107,7 +119,8 @@
     <script>
     $(document).ready(function() {
         $('#list').DataTable({
-            "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]]
+            "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]],
+            "language": espanol
         });
     } );
 
@@ -124,5 +137,34 @@
         $("#view").removeClass("fas fa-list");
         $("#view").addClass("fas fa-table");
     }
+
+    let espanol = {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ registros",
+        "sZeroRecords":    "No se encontraron resultados",
+        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix":    "",
+        "sSearch":         "Buscar:",
+        "sUrl":            "",
+        "sInfoThousands":  ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+            "sFirst":    "Primero",
+            "sLast":     "Último",
+            "sNext":     "Siguiente",
+            "sPrevious": "Anterior"
+        },
+        "oAria": {
+            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        },
+        "buttons": {
+            "copy": "Copiar",
+            "colvis": "Visibilidad"
+        }
+    };
     </script>
 @stop

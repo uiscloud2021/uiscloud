@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('category_id', 'Carpeta donde se almacenará el archivo', ['class' => 'form-label']) !!}
+                    {!! Form::label('category_id', 'Directorio principal donde se almacenará el archivo', ['class' => 'form-label']) !!}
                     {!! Form::select('category_id', $categories, null, ['class' => 'form-control']) !!}
                 
                     @error('category_id')

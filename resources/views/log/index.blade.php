@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Archivos')
+@section('title', 'Logs')
 
 @section('content_header')
-<h4 class="m-0">Lista de Archivos</h4>
+<h4 class="m-0">Lista de Archivos modificados</h4>
 @stop
 
 @section('content')
@@ -14,43 +14,36 @@
 
 <div class="card">
 
-<!--<div class="card-header">
-    <a href="{{route('files.create')}}" class="btn btn-secondary">Agregar archivo</a> 
-</div>-->
 
 <div class="card-body">
-<table id="files" class="table table-responsive table-striped table-bordered shadow-lg mt-4" style="width:100%">
+<div class="table-responsive">
+<table id="logs" class="table table-striped table-bordered shadow-lg mt-4" style="width:100%">
     <thead class="bg-primary text-white">
         <tr>
-            <th scope="col"></th>
             <th scope="col">Nombre</th>
-            <th scope="col">Tipo de archivo</th>
+            <th scope="col">Directorio</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Detalles</th>
             <th scope="col">Versión</th>
+            <th scope="col">Usuario</th>
             <th scope="col">Fecha</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-        @foreach ($files as $file)
+        @foreach ($logs as $log)
             <tr>
-                <td width="7%"><img src="vendor/adminlte/dist/img/icons/{{$file->type}}.png" width="90%" heigth="90%"></td>
-                <td><a target="_blank" href="{{$file->url}}">{{ $file->name }}</a></td>
-                <td>{{ $file->type }}</td>
-                <td>{{ $file->version }}</td>
-                <td>{{ $file->created_at }}</td>
-                <td width="10px"><a class="btn btn-info btn-sm" href="{{route('files.edit', $file)}}">Editar</a></td>
-                <td width="10px">
-                <form action="{{route('files.destroy',$file)}}" method="POST">
-                    @csrf
-                    @method('delete')
-                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                </form>
-                </td>
+                <td><a target="_blank" href="{{$log->url}}">{{ $log->filename }}</a></td>
+                <td>{{ $log->directory }}</td>
+                <td>{{ $log->type }}</td>
+                <td>{{ $log->details }}</td>
+                <td>{{ $log->version }}</td>
+                <td>{{ $log->users->name }}</td>
+                <td>{{ $log->created_at }}</td>
             </tr>
         @endforeach
     </tbody>
 </table>
+</div>
 </div>
 </div>
 @stop
@@ -66,7 +59,7 @@
     <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap5.min.js"></script>
     <script>
     $(document).ready(function() {
-        $('#files').DataTable({
+        $('#logs').DataTable({
             "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]],
             "language": espanol
         });

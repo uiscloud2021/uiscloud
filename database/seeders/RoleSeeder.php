@@ -45,5 +45,21 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'files.edit', 'description' => 'Editar archivos'])->assignRole($role1);
         Permission::create(['name' => 'files.destroy', 'description' => 'Eliminar archivos'])->assignRole($role1);
 
+        Permission::create(['name' => 'logs.index', 'description' => 'Logs'])->assignRole($role1);
+
+        Permission::create(['name' => 'dashboard.list_files', 'description' => 'Lista de archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.delete_files', 'description' => 'Borrar archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.edit_files', 'description' => 'Cargar edición de archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.details', 'description' => 'Detalles Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.created_files', 'description' => 'Crear archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.download_files', 'description' => 'Descargar archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.update_files', 'description' => 'Editar archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+
+        Permission::create(['name' => 'dashboard.folderdetails', 'description' => 'Detalles carpetas Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.create_folder', 'description' => 'Crear carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.edit_folder', 'description' => 'Cargar edición de carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.update_folder', 'description' => 'Editar carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.delete_folder', 'description' => 'Eliminar carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
+
     }
 }

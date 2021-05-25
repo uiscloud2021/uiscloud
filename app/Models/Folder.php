@@ -14,14 +14,15 @@ class Folder extends Model
 
     //RELACION MUCHOS A MUCHOS EN TABLAS
     public function users(){
-        return $this->belongsToMany(User::class);
-    }
-
-    public function files(){
-        return $this->belongsToMany(File::class);
+        return $this->belongsToMany(User::class,'folder_user')
+            ->withPivot('user_id');
     }
 
     //RELACION UNO A MUCHOS INVERSA EN TABLAS
+    /*public function files(){
+        return $this->belongsTo(File::class);
+    }*/
+
     public function useris(){
         return $this->belongsTo(User::class);
     }

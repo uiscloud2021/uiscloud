@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\Recycled;
+use App\Models\Log;
 
 class InicioController extends Controller
 {
@@ -20,11 +22,22 @@ class InicioController extends Controller
      */
     public function index()
     {
-        $filecounter = File::count();//Trae el contador de los registros de la tabla
-        $usercounter = User::count();
-        $categorycounter = Category::count();
         
-        return view('home.index')->with('filecounter', $filecounter)->with('usercounter', $usercounter)->with('categorycounter', $categorycounter);//le pasamos las variables a nuestro dashboard
+       $categories = Category::selectRaw('categories.name as categoria, count(category_id) as archivos')
+        ->leftJoin('files', 'categories.id', '=', 'files.category_id')
+        ->groupBy('categories.name')
+        ->get();
+
+        $files = Recycled::selectRaw('category as categoria, count(id) as eliminados')
+        ->groupBy('category')
+        ->get();
+
+        $logs = Log::selectRaw('directory as categoria, count(id) as modificados')
+        ->groupBy('directory')
+        ->get();
+
+        return view('home.index')->with('categories', $categories)->with('files', $files)->with('logs', $logs);
+        
     }
 
     /**

@@ -59,10 +59,10 @@
         {{-- Login field --}}
         <div class="row">
             <div class="col-7">
-                <div class="icheck-primary">
+                <!--<div class="icheck-primary">
                     <input type="checkbox" name="remember" id="remember">
                     <label for="remember">Recordarme</label>
-                </div>
+                </div>-->
             </div>
             <div class="col-5">
                 <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">

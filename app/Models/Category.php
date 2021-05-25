@@ -14,7 +14,8 @@ class Category extends Model
 
     //RELACION MUCHOS A MUCHOS
     public function users(){
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class,'category_user')
+            ->withPivot('category_id');
     }
 
     //RELACION UNO A MUCHOS

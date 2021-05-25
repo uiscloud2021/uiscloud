@@ -104,6 +104,13 @@ class CategoryController extends Controller
             'users' => 'required'
         ]);
         
+        //CARGAR LOS DATOS DEL DIRECTORIO
+        /*$directorio = Category::where('id', '=', $category->id)->get()->first();
+        $name = $directorio->name;
+        
+        Storage::deleteDirectory($name);
+        Storage::makeDirectory($category->name);*/
+
         //GUARDAR CAMBIOS
         $category -> update($request->all());//GUARDAR TODOS LOS CAMBIOS
 
