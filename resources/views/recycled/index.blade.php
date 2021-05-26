@@ -26,10 +26,11 @@
         <div class="card-tools">
             <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i id="view" class="fas fa-table"></i>
+                    <!--<i id="view" class="fas fa-table"></i>-->
+                    <i id="view" class="fas fa-list"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(46px, 19px, 0px);">
-                    <a href="#" class="dropdown-item" onclick="Icon();"><i class="fas fa-table"> Iconos</i></a>
+                    <!--<a href="#" class="dropdown-item" onclick="Icon();"><i class="fas fa-table"> Iconos</i></a>-->
                     <a href="#" class="dropdown-item" onclick="List();"><i class="fas fa-list"> Lista</i></a>
                     <a class="dropdown-divider"></a>
                 </div>
@@ -39,28 +40,28 @@
     </div>
 
 <div class="card-body">
-
-<table id="icons" class="table-responsive" style="width:100%">
+<!--
+<table id="icons" class="table-responsive" style="width:100%; display:none">
 <?php
-    $cont=0;
+    //$cont=0;
 ?>
     <tbody>
             @foreach ($recycleds as $recycled)
 
                 <?php
-                $cont++;
-                if($cont % 7 == 0){
-                    echo '<tr></tr>';
-                }
+                //$cont++;
+                //if($cont % 7 == 0){
+                  //  echo '<tr></tr>';
+                //}
                 ?>
                 <td><a target="_blank" href="{{$recycled->url_new}}"><img src="vendor/adminlte/dist/img/icons/{{$recycled->type}}.png" width="10%" heigth="10%"><br/>
                 {{ $recycled->name }}.{{ $recycled->type }}</a></td>
             
             @endforeach
     </tbody>
-</table>
+</table>-->
 
-<div id="lists" class="table-responsive" style="display:none">
+<div id="lists" class="table-responsive" >
 <table id="list" class="table table-striped table-bordered shadow-lg mt-4" style="width:100%;">
     <thead class="bg-primary text-white">
         <tr>
