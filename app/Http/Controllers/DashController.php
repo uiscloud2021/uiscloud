@@ -254,8 +254,10 @@ class DashController extends Controller
                 $path = $request->file('archivo_editf')->store($folder_prev, 's3');
                 $extension = $request->file('archivo_editf')->extension();
                 $filename = $files -> filename = basename($path);
-                $files -> url = Storage::disk(name: 's3')->url($path);
-                $files -> size = Storage::disk(name: 's3')->size($path);
+                //$files -> url = Storage::disk(name: 's3')->url($path);
+                //$files -> size = Storage::disk(name: 's3')->size($path);
+                $files -> url = Storage::disk('s3')->url($path);
+                $files -> size = Storage::disk('s3')->size($path);
                 $files -> type = $extension;
                 $files -> version = $version;
 
@@ -315,9 +317,11 @@ class DashController extends Controller
                 $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
                 $url_folder = $cons_folder->url;
 
-                $path = $request->file('archivo_addf')->store(path: $url_folder, options: 's3');
+                //$path = $request->file('archivo_addf')->store(path: $url_folder, options: 's3');
+                $path = $request->file('archivo_addf')->store($url_folder, 's3');
             }else{
-                $path = $request->file('archivo_addf')->store(path: $folder, options: 's3');
+                //$path = $request->file('archivo_addf')->store(path: $folder, options: 's3');
+                $path = $request->file('archivo_addf')->store($folder, 's3');
             }
             
             $extension = $request->file('archivo_addf')->extension();
@@ -334,8 +338,10 @@ class DashController extends Controller
             $files = new File();
             $files -> name = $request->name_addf;
             $filename = $files -> filename = basename($path);
-            $files -> url = Storage::disk(name: 's3')->url($path);
-            $files -> size = Storage::disk(name: 's3')->size($path);
+            //$files -> url = Storage::disk(name: 's3')->url($path);
+            //$files -> size = Storage::disk(name: 's3')->size($path);
+            $files -> url = Storage::disk('s3')->url($path);
+            $files -> size = Storage::disk('s3')->size($path);
             $files -> type = $extension;
             $files -> version = $version;
             $files -> id_user = $current_user;
