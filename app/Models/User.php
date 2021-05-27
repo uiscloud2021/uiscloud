@@ -73,7 +73,8 @@ class User extends Authenticatable
     }
 
     public function adminlte_profile_url(){ //metodo para perfil de usuario
-        return "profile/username";
+        return "profile";
+      // return view('dashboard.profile');
     }
 
     //RELACION MUCHOS A MUCHOS

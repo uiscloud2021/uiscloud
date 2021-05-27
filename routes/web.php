@@ -9,6 +9,7 @@ use App\Http\Controllers\InicioController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DashController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,9 @@ Route::resource('dashboard', DashController::class);
 
 Route::resource('logs', LogController::class);
 
+Route::resource('profile', ProfileController::class);
+
+
 Route::post('/dashboard/list_files', 'App\Http\Controllers\DashController@list_files')->name('dashboard.list_files');
 Route::post('/dashboard/delete_files', 'App\Http\Controllers\DashController@delete_files')->name('dashboard.delete_files');
 Route::post('/dashboard/edit_files', 'App\Http\Controllers\DashController@edit_files')->name('dashboard.edit_files');
@@ -57,6 +61,7 @@ Route::post('/dashboard/created_folder', 'App\Http\Controllers\DashController@cr
 Route::post('/dashboard/edit_folder', 'App\Http\Controllers\DashController@edit_folder')->name('dashboard.edit_folder');
 Route::post('/dashboard/update_folder', 'App\Http\Controllers\DashController@update_folder')->name('dashboard.update_folder');
 Route::post('/dashboard/delete_folder', 'App\Http\Controllers\DashController@delete_folder')->name('dashboard.delete_folder');
+
 
 Route::get('/dashboard', 'App\Http\Controllers\DashController@index')->name('dashboard');
 
