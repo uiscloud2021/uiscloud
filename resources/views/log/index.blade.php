@@ -32,12 +32,12 @@
     <tbody>
         @foreach ($logs as $log)
             <tr>
-                <td><a target="_blank" href="{{$log->url}}">{{ $log->filename }}</a></td>
+                <td><a target="_blank" href="{{$log->url}}">{{ $log->name }}</a></td>
                 <td>{{ $log->directory }}</td>
                 <td>{{ $log->type }}</td>
                 <td>{{ $log->details }}</td>
                 <td>{{ $log->version }}</td>
-                <td>{{ $log->users->name }}</td>
+                <td>{{ $log->user }}</td>
                 <td>{{ $log->created_at }}</td>
             </tr>
         @endforeach

@@ -22,16 +22,16 @@
     <thead class="bg-primary text-white">
         <tr>
             <th scope="col">Nombre</th>
-            <!--<th scope="col"></th>
-            <th scope="col"></th>-->
+            <th scope="col"></th>
+            <!--<th scope="col"></th>-->
         </tr>
     </thead>
     <tbody>
         @foreach ($categories as $category)
             <tr>
                 <td>{{ $category->name }}</td>
-                <!--<td width="10px"><a class="btn btn-info btn-sm" href="{{route('categories.edit', $category)}}">Editar</a></td>
-                <td width="10px">
+                <td width="10px"><a class="btn btn-info btn-sm" href="{{route('categories.edit', $category)}}">Editar</a></td>
+                <!--<td width="10px">
                 <form action="{{route('categories.destroy',$category)}}" method="POST">
                     @csrf
                     @method('delete')

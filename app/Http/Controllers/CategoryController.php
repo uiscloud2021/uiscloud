@@ -112,7 +112,7 @@ class CategoryController extends Controller
         Storage::makeDirectory($category->name);*/
 
         //GUARDAR CAMBIOS
-        $category -> update($request->all());//GUARDAR TODOS LOS CAMBIOS
+        //$category -> update($request->all());//GUARDAR TODOS LOS CAMBIOS
 
         if($request->users){
             $category->users()->sync($request->users);//CAMBIOS EN TABLA RELACION CATEGORY_USER

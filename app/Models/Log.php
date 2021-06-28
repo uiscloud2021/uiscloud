@@ -13,13 +13,13 @@ class Log extends Model
     protected $guarded = ['id', 'created_at', 'update_at'];
     
     //RELACION UNO A MUCHOS INVERSA EN TABLAS
-    public function users(){
+    /*public function users(){
         //return $this->belongsTo(User::class);
         return $this->belongsTo(User::class,'id');
-    }
+    }*/
 
-    public function files(){
+    /*public function files(){
         //return $this->belongsTo(File::class);
         return $this->belongsTo(File::class,'id');
-    }
+    }*/
 }

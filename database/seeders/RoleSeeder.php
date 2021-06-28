@@ -38,10 +38,10 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'categories.index', 'description' => 'Lista de directorios'])->assignRole($role1);
         Permission::create(['name' => 'categories.create', 'description' => 'Agregar directorios'])->assignRole($role1);
         Permission::create(['name' => 'categories.edit', 'description' => 'Editar directorios'])->assignRole($role1);
-        Permission::create(['name' => 'categories.destroy', 'description' => 'Eliminar directorios'])->assignRole($role1);
+        //Permission::create(['name' => 'categories.destroy', 'description' => 'Eliminar directorios'])->assignRole($role1);
 
         Permission::create(['name' => 'files.index', 'description' => 'Lista de archivos'])->assignRole($role1);
-        Permission::create(['name' => 'files.create', 'description' => 'Agregar archivos'])->assignRole($role1);
+        //Permission::create(['name' => 'files.create', 'description' => 'Agregar archivos'])->assignRole($role1);
         Permission::create(['name' => 'files.edit', 'description' => 'Editar archivos'])->assignRole($role1);
         Permission::create(['name' => 'files.destroy', 'description' => 'Eliminar archivos'])->assignRole($role1);
 
@@ -54,6 +54,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'dashboard.created_files', 'description' => 'Crear archivos Servidor UIS'])->syncRoles([$role1, $role2]);
         Permission::create(['name' => 'dashboard.download_files', 'description' => 'Descargar archivos Servidor UIS'])->syncRoles([$role1, $role2]);
         Permission::create(['name' => 'dashboard.update_files', 'description' => 'Editar archivos Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.comprimir_files', 'description' => 'Comprimir archivos Servidor UIS'])->syncRoles([$role1, $role2]);
 
         Permission::create(['name' => 'dashboard.folderdetails', 'description' => 'Detalles carpetas Servidor UIS'])->syncRoles([$role1, $role2]);
         Permission::create(['name' => 'dashboard.create_folder', 'description' => 'Crear carpeta Servidor UIS'])->syncRoles([$role1, $role2]);

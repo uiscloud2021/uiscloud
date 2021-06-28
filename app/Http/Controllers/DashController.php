@@ -10,7 +10,10 @@ use App\Models\Log;
 use Yajra\Datatables\Datatables;
 use App\Models\Recycled;
 use App\Models\Folder;
-use Storage;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
+
+//use Storage;
 use Carbon\Carbon;
 
 class DashController extends Controller
@@ -19,6 +22,8 @@ class DashController extends Controller
     public function __construct(){
         $this->middleware('can:dashboard');
     }
+
+    
     /**
      * Display a listing of the resource.
      *
@@ -131,6 +136,10 @@ class DashController extends Controller
             $html10 = $files->type;
             return $html10;
         })
+        ->addColumn('date', function ($files) {
+            $html4 = $files->created_at->__toString();
+            return $html4;
+        })
         ->addColumn('edit', function ($files) {
             $html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFile('.$files->id.')">Editar</a>';
             return $html2;
@@ -141,7 +150,7 @@ class DashController extends Controller
             $html3 = '<button type="button" name="delete" id="'.$files->id.'" class="delete btn btn-danger btn-sm">Eliminar</button>';
             return $html3;
         })
-        ->rawColumns(['file_name', 'img', 'type', 'edit', 'delete'])
+        ->rawColumns(['file_name', 'img', 'type', 'date', 'edit', 'delete'])
         ->make(true);
     }
 
@@ -185,9 +194,14 @@ class DashController extends Controller
         $recycled->user = $user_delete;
         $recycled->category = $folder_prev;
         $recycled->folder = $folder_prev;
+        $recycled->file_id = $id_file;
         // Guardar
         $recycled->save();
 
+        /*$logs = log::where('id', '=', $id_file)->get();
+        if($logs>0){
+            $log_delete = Log::where('file_id', $id_file)->delete();
+        }*/
         $file_delete = File::where('id', $id_file)->delete();
         
         return response("eliminado");
@@ -204,12 +218,14 @@ class DashController extends Controller
     public function update_files(Request $request)
     {
         if($request->ajax()){
+            $time=Carbon::now();
             $current_user = auth()->id();
             $id_file = $request->id;
 
             //CARGAR LOS DATOS DEL ARCHIVO
             $files_prev = File::where('id', '=', $id_file)->get()->first();
             $archivo_prev = $files_prev->filename;
+            $name_file = $files_prev->name;
             $category_prev = $files_prev->category_id;
             $iduser_prev = $files_prev->id_user;
             $version_ant = $files_prev->version;
@@ -217,6 +233,10 @@ class DashController extends Controller
             //CONSULTA PARA CARPETA ANTERIOR
             $name_category_prev = Category::where('id', '=', $category_prev)->get()->first();
             $folder_prev = $name_category_prev->name;
+
+            //CONSULTA PARA EL USUARIO QUE MODIFICARA EL ARCHIVO
+            $name_user = User::where('id', '=', $current_user)->get()->first();
+            $user_modify = $name_user->name;
 
             $archivo_new = $request->file('archivo_editf');
             //GUARDAR SI EL ARCHIVO ES MODIFICADO
@@ -231,13 +251,14 @@ class DashController extends Controller
                 //GUARDAR DATOS EN TABLA LOGS MODIFICADOS
                 $log = new Log();
                 $log->directory = $folder_prev;
+                $log->name = $name_file;
                 $log->details = $request->details_editf;
                 $log->filename = $archivo_prev;
                 $log->url = $url_new;
                 $log->size = $files_prev->size;
                 $log->type = $files_prev->type;
                 $log->version = $files_prev->version;
-                $log->user_id = $iduser_prev;
+                $log->user = $user_modify;
                 $log->file_id = $id_file;
                 // Guardar
                 $log->save();
@@ -249,15 +270,24 @@ class DashController extends Controller
             $version = $version_ant + 1;
             
             if($archivo_new!=""){
+                //get filename with extension
+                $filenamewithextension = $request->file('archivo_editf')->getClientOriginalName();
+         
+                //get filename without extension
+                $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+         
+                //get file extension
+                $extension = $request->file('archivo_editf')->getClientOriginalExtension();
+                $filenameoriginal = $filename.'_'.$time.'.'.$extension;
+                
+                //filename to store
+                $filenametostore = $folder_prev."/".$filename.'_'.$time.'.'.$extension;
+                
                 //GUARDAR ARCHIVO NUEVO EN S3
-                //$path = $request->file('archivo_editf')->store(path: $folder_prev, options: 's3');
-                $path = $request->file('archivo_editf')->store($folder_prev, 's3');
-                $extension = $request->file('archivo_editf')->extension();
-                $filename = $files -> filename = basename($path);
-                //$files -> url = Storage::disk(name: 's3')->url($path);
-                //$files -> size = Storage::disk(name: 's3')->size($path);
-                $files -> url = Storage::disk('s3')->url($path);
-                $files -> size = Storage::disk('s3')->size($path);
+                Storage::disk('s3')->put($filenametostore, 'public');
+                $filename = $files -> filename = $filenameoriginal;
+                $files -> url = Storage::disk('s3')->url($filenametostore);
+                $files -> size = Storage::disk('s3')->size($filenametostore);
                 $files -> type = $extension;
                 $files -> version = $version;
 
@@ -296,13 +326,38 @@ class DashController extends Controller
     {
         $radio=$request->radio;
         $logs = Log::where('file_id', $radio)->get();
-        return response(json_encode($logs, JSON_UNESCAPED_UNICODE));
+
+        return datatables()->of($logs)
+        ->addColumn('name', function ($logs) {
+            $html = '<a href="'.$logs->url.'">'.$logs->name.'</a>';
+            return $html;
+        })
+        ->addColumn('details', function ($logs) {
+            $html2 = $logs->details;
+            return $html2;
+        })
+        ->addColumn('version', function ($logs) {
+            $html3 = $logs->version;
+            return $html3;
+        })
+        ->addColumn('user', function ($logs) {
+            $html5 = $logs->user;
+            return $html5;
+        })
+        ->addColumn('date', function ($logs) {
+            $html4 = $logs->created_at->__toString();
+            return $html4;
+        })
+        ->rawColumns(['name', 'details', 'version', 'user', 'date'])
+        ->make(true);
+
     }
 
 
     public function created_files(Request $request)
     {
          if($request->ajax()){
+            $time=Carbon::now();
             $current_user = auth()->id();
             //LE PASO EL NOMBRE DE LA CARPETA
             $category_id = $request->category_id_addf;
@@ -311,24 +366,43 @@ class DashController extends Controller
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
-
-            //GUARDAR ARCHIVO EN S3
+            /*/GUARDAR ARCHIVO EN S3
             if($id_folder != 0){
                 $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
                 $url_folder = $cons_folder->url;
-
-                //$path = $request->file('archivo_addf')->store(path: $url_folder, options: 's3');
                 $path = $request->file('archivo_addf')->store($url_folder, 's3');
             }else{
-                //$path = $request->file('archivo_addf')->store(path: $folder, options: 's3');
                 $path = $request->file('archivo_addf')->store($folder, 's3');
+            }*/
+
+            //get filename with extension
+            $filenamewithextension = $request->file('archivo_addf')->getClientOriginalName();
+         
+            //get filename without extension
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+         
+            //get file extension
+            $extension = $request->file('archivo_addf')->getClientOriginalExtension();
+            $filenameoriginal = $filename.'_'.$time.'.'.$extension;
+                
+            if($id_folder != 0){
+                $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
+                $url_folder = $cons_folder->url;
+                //filename to store
+                $filenametostore = $url_folder."/".$filename.'_'.$time.'.'.$extension;
+                //Upload File to s3
+                Storage::disk('s3')->put($filenametostore, 'public');
+            }else{
+                //filename to store
+                $filenametostore = $folder."/".$filename.'_'.$time.'.'.$extension;
+                Storage::disk('s3')->put($filenametostore, 'public');
             }
             
             $extension = $request->file('archivo_addf')->extension();
             $version="1";
 
             //VERIFICAR VERSIONAMIENTO
-            if($extension == "doc" || $extension == "docx" || $extension == "xls" || $extension == "xlsx"){
+            if($extension == "doc" || $extension == "docx" || $extension == "xls" || $extension == "xlsx" || $extension == "vsd" || $extension == "ppt" || $extension == "pptx"){
                 $versionamiento="No";
             }else{
                 $versionamiento="Si";
@@ -337,11 +411,10 @@ class DashController extends Controller
             //GUARDAR REGISTROS
             $files = new File();
             $files -> name = $request->name_addf;
-            $filename = $files -> filename = basename($path);
-            //$files -> url = Storage::disk(name: 's3')->url($path);
-            //$files -> size = Storage::disk(name: 's3')->size($path);
-            $files -> url = Storage::disk('s3')->url($path);
-            $files -> size = Storage::disk('s3')->size($path);
+            //$filename = $files -> filename = basename($path);
+            $filename = $files -> filename = $filenameoriginal;
+            $files -> url = Storage::disk('s3')->url($filenametostore);
+            $files -> size = Storage::disk('s3')->size($filenametostore);
             $files -> type = $extension;
             $files -> version = $version;
             $files -> id_user = $current_user;
@@ -389,21 +462,25 @@ class DashController extends Controller
         $block = $files->bloqueado;
         $user = $files->user_block;
         $url = $files->url;
+        $name_origin=$files->filename;
 
         if($versionamiento == "No"){
+            $users = User::where('id', '=', $current_user)->get()->first();
+            $user_name = $users->name;
+            
             if($block == 0){
-                $users = User::where('id', '=', $current_user)->get()->first();
-                $user_name = $users->name;
-
                 $fil = File::find($file_id);
                 $fil -> bloqueado = '1';
                 $fil -> user_block = $user_name;
                 $fil -> save();
 
                 return response()->json(['success'=>'disponible', 'url'=>$url]);
+            }else if($user_name==$user){
+                return response()->json(['success'=>'bloqueadoedit', 'id'=>$file_id]);
             }else{
                 return response()->json(['success'=>'bloqueado', 'user'=>$user]);
             }
+
         }else{
             return response()->json(['success'=>'disponible', 'url'=>$url]);
         }
@@ -423,6 +500,10 @@ class DashController extends Controller
             $html = $folders->name;
             return $html;
         })
+        ->addColumn('date', function ($folders) {
+            $html4 = $folders->created_at->__toString();
+            return $html4;
+        })
         ->addColumn('edit', function ($folders) {
             $html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFolder('.$folders->id.')">Editar</a>';
             return $html2;
@@ -432,7 +513,7 @@ class DashController extends Controller
             $html3 = '<button type="button" name="delete" id="'.$folders->id.'" class="delete btn btn-danger btn-sm">Eliminar</button>';
             return $html3;
         })
-        ->rawColumns(['name', 'edit', 'delete'])
+        ->rawColumns(['name', 'date', 'edit', 'delete'])
         ->make(true);
     }
 
@@ -532,6 +613,55 @@ class DashController extends Controller
 
             return response("actualizado");
          }
+    }
+
+
+
+
+    public function comprimir_files(Request $request)
+    {
+        if($request->ajax()){
+            $id_files=$request->id;
+            $current_user = auth()->id();
+
+            $public_dir=public_path();
+        	// Zip File Name
+            $zipFileName = 'AllDocuments'.time().'.zip';
+            // Create ZipArchive Obj
+            $zip = new ZipArchive;
+
+            if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === TRUE) {    
+                // Add Multiple file   
+                foreach($id_files as $file) {
+                    $files = File::where('id', '=', $file)->get()->first();
+                    $zip->addFromString($files->filename, file_get_contents($files->url));
+                }        
+                $zip->close();
+            }
+            // Set Header
+            $headers = array(
+                'Content-Type' => 'application/octet-stream',
+            );
+            $filetopath=$public_dir.'/'.$zipFileName;
+            // Create Download Response
+            if(file_exists($filetopath)){
+                $directorio = Storage::disk('s3')->put("ZIP/$zipFileName", file_get_contents($filetopath), 'public');
+                $url = Storage::disk('s3')->url("ZIP/".$zipFileName);
+                //ELIMINAMOS EL ARCHIVO LOCAL
+                unlink($filetopath);
+
+                return response($url);
+            }
+
+            
+            
+            //ELIMINAR DESDE CHECKBOX VARIOS FILES AL MISMO TIEMPO
+            //$files = File::whereIn('id', $id_files);
+            /*if($files->delete()){
+                echo "file delete";
+            }*/
+            
+        }
     }
 
     

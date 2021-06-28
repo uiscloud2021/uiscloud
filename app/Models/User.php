@@ -94,16 +94,15 @@ class User extends Authenticatable
     }
 
     //RELACION UNO A MUCHOS
+    /*public function logs(){
+        return $this->belongsTo(Log::class,'user_id');
+    }*/
+
     public function filies(){
         return $this->hasMany(File::class,'id_user');
     }
 
     public function foldiers(){
         return $this->hasMany(Folder::class);
-    }
-
-    public function logs(){
-        return $this->belongsTo(Log::class,'users')
-        ->withPivot('user_id');
     }
 }

@@ -55,6 +55,7 @@ Route::post('/dashboard/details', 'App\Http\Controllers\DashController@details')
 Route::post('/dashboard/created_files', 'App\Http\Controllers\DashController@created_files')->name('dashboard.created_files');
 Route::post('/dashboard/download_files', 'App\Http\Controllers\DashController@download_files')->name('dashboard.download_files');
 Route::post('/dashboard/update_files', 'App\Http\Controllers\DashController@update_files')->name('dashboard.update_files');
+Route::post('/dashboard/comprimir_files', 'App\Http\Controllers\DashController@comprimir_files')->name('dashboard.comprimir_files');
 
 Route::post('/dashboard/folderdetails', 'App\Http\Controllers\DashController@folderdetails')->name('dashboard.folderdetails');
 Route::post('/dashboard/created_folder', 'App\Http\Controllers\DashController@created_folder')->name('dashboard.created_folder');

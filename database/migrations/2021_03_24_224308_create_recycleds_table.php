@@ -25,6 +25,7 @@ class CreateRecycledsTable extends Migration
             $table->string('user',100);
             $table->string('category',100);
             $table->string('folder',100);
+            $table->unsignedBigInteger('file_id');
             
             $table->timestamps();
         });

@@ -12,6 +12,11 @@ function DescargarFile(file_id){
         {
             if(resp.success == "disponible"){
                 window.open(resp.url, "_blank");
+            }else if(resp.success == "bloqueadoedit"){
+                setTimeout(function(){
+                    toastr.warning('Subir el archivo actualizado o desbloquear el archivo', 'Archivo en uso', {timeOut:3000});
+                });
+                EditFile(resp.id);
             }else if(resp.success == "bloqueado"){
                 setTimeout(function(){
                     toastr.warning('El archivo se encuentra en uso por el usuario '+resp.user, 'Archivo en uso', {timeOut:3000});
@@ -21,9 +26,59 @@ function DescargarFile(file_id){
     });
 }
 
+function Seleccionar(){
+    $( "#seleccionar" ).hide();
+    $( "#comprimir" ).show();
+    //folder=$('#cont_folder').val();
+    icons=$('#cont_icons').val();
+    for(a=1; a<=icons; a++){
+        $( "#radioicons_details"+a ).hide();
+        $( "#chk_icons"+a ).show();
+    }
+    /*for(b=1; b<=folder; b++){
+        $( "#radiofolder_details"+b ).hide();
+        $( "#chk_folder"+b ).show();
+    }*/
+}
+
+function Comprimir(){
+    var id = [];
+    $('input[type=checkbox]:checked').each(function() {
+      id.push($(this).val());
+    });
+    if(id.length > 0){
+        toastr.warning('Los archivos están siendo procesados para descarga', 'Descargar', {timeOut:3000});
+        $( "#seleccionar" ).show();
+        $( "#comprimir" ).hide();
+        icons=$('#cont_icons').val();
+        for(a=1; a<=icons; a++){
+            $( "#radioicons_details"+a ).show();
+            $( "#chk_icons"+a ).hide();
+            $("#chk_icons"+a).prop('checked', false);
+        }
+        $.ajax({
+            url: "/dashboard/comprimir_files",
+            method: "post",
+            data: {
+                id:id,
+                _token:$('input[name="_token"]').val()
+            },
+            success: function (resp)
+            {
+                window.open(resp, "_blank");
+            }   
+    });
+    }else{
+        toastr.warning('Seleccionar al menos un archivo', 'Descargar', {timeOut:3000});
+    }
+}
+
 //TABLA DE DETALLES DE ARCHIVO
 function Details(radio){
-    $('#detail').DataTable({
+    var details = $('#detail').DataTable({
+        dom: 'T<"clear">lfrtip',
+        "processing": true,
+        "serverSide": true,
         destroy: true,
         "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]],
         "ajax":{
@@ -33,13 +88,14 @@ function Details(radio){
                 radio:radio,
                 _token:$('input[name="_token"]').val()
             },
-            "dataSrc": ""
+            
         },
         "columns": [
-            {"data": 'filename'},
+            {"data": 'name'},
             {"data": 'details'},
             {"data": 'version'},
-            {"data": 'created_at'}, 
+            {"data": 'user'},
+            {"data": 'date'},
         ],
         "language": espanol
     });
@@ -67,7 +123,7 @@ function FolderDetails(radio){
         },
         "columns": [
             {"data": 'name'},
-            {"data": 'created_at'},
+            {"data": 'date'},
             {"data": 'edit'},
         ],
         "language": espanol
@@ -102,7 +158,7 @@ function Datatable_list(){
             {"data": 'file_name'},
             {"data": 'type'},
             {"data": 'version'},
-            {"data": 'created_at'},
+            {"data": 'date'},
             {"data": 'edit'},
             {"data": 'delete'},
         ],

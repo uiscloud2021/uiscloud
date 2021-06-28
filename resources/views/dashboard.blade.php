@@ -89,7 +89,7 @@
                 
                 <form action="{{route('dashboard')}}" method="POST">
                     @csrf
-                    <input type="text" value="{{$category->id}}" name="id_category">
+                    <input type="hidden" value="{{$category->id}}" name="id_category">
                     <input type="hidden" value="{{$category->name}}" name="name_category"> 
                     <input type="hidden" value="0" name="nivel_folder">   
                     

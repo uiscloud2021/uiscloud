@@ -32,10 +32,10 @@ class File extends Model
         return $this->belongsTo(Category::class,'category_id');
     }
 
-    public function logs(){
+    /*public function logs(){
         return $this->belongsTo(Log::class,'files')
         ->withPivot('file_id');;
-    }
+    }*/
 }
 
 

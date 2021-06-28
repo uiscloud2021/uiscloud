@@ -53,6 +53,12 @@ return [
             'visibility' => 'public',
         ],
 
+        'tmp' => [
+            'driver' => 'local',
+            'root' => env('USE_LAMBDA_STORAGE', true) ? "/tmp" : storage_path('app/temp'),
+            'url' => env('USE_LAMBDA_STORAGE', true) ? "/tmp" : storage_path('app/temp'),
+        ],
+
     ],
 
     /*

@@ -56,7 +56,7 @@ class FileController extends Controller
             'users' => 'required'
         ]);
 
-        //LE PASO EL NOMBRE DE LA CARPETA
+        /*/LE PASO EL NOMBRE DE LA CARPETA
         $category_id = $request->get('category_id');
         $name_category = Category::where('id', '=', $category_id)->get()->first();
         $folder = $name_category->name;
@@ -93,7 +93,7 @@ class FileController extends Controller
         }
         //redirecciona a pagina edit
         return redirect()->route('files.edit',$files)->with('info', 'El archivo se subio correctamente');
-
+        */
     }
 
     /**
@@ -141,6 +141,7 @@ class FileController extends Controller
 
         //ALMACENAR EN VARIABLE EL ARCHIVO Y LA URL
         $archivo_prev = $file->filename;
+        $name_file = $file->name;
         $category_prev = $file->category_id;
         $iduser_prev = $file->id_user;
 
@@ -155,6 +156,10 @@ class FileController extends Controller
         $name_category = Category::where('id', '=', $category_id)->get()->first();
         $folder = $name_category->name;
 
+        //CONSULTA PARA EL USUARIO QUE MODIFICARA EL ARCHIVO
+        $name_user = User::where('id', '=', $current_user)->get()->first();
+        $user_modify = $name_user->name;
+
         $archivo_new = $request->file('archivo');
 
         if($archivo_new!=""){
@@ -168,13 +173,14 @@ class FileController extends Controller
             //GUARDAR DATOS EN TABLA LOGS MODIFICADOS
             $log = new Log();
             $log->directory = $folder_prev;
+            $log->name = $name_file;
             $log->details = $request->get('details');
             $log->filename = $file->filename;
             $log->url = $url_new;
             $log->size = $file->size;
             $log->type = $file->type;
             $log->version = $file->version;
-            $log->user_id = $file->id_user;
+            $log->user = $user_modify;
             $log->file_id = $file->id;
             // Guardar
             $log->save();
@@ -185,15 +191,26 @@ class FileController extends Controller
         $files -> name = $request->get('name');
         $version = $file->version + 1;
         if($archivo_new!=""){
+            //get filename with extension
+            $filenamewithextension = $request->file('archivo')->getClientOriginalName();
+         
+            //get filename without extension
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+     
+            //get file extension
+            $extension = $request->file('archivo')->getClientOriginalExtension();
+            $filenameoriginal = $filename.'_'.$fecha.'.'.$extension;
+            
+            //filename to store
+            $filenametostore = $folder."/".$filename.'_'.$fecha.'.'.$extension;
+
             //GUARDAR ARCHIVO NUEVO EN S3
-            //$path = $request->file('archivo')->store(path: $folder, options: 's3');
-            $path = $request->file('archivo')->store($folder, 's3');
-            $extension = $request->file('archivo')->extension();
-            $filename = $files -> filename = basename($path);
+            Storage::disk('s3')->put($filenametostore, 'public');
+            $filename = $files -> filename = $filenameoriginal;
             //$files -> url = Storage::disk(name: 's3')->url($path);
             //$files -> size = Storage::disk(name: 's3')->size($path);
-            $files -> url = Storage::disk('s3')->url($path);
-            $files -> size = Storage::disk('s3')->size($path);
+            $files -> url = Storage::disk('s3')->url($filenametostore);
+            $files -> size = Storage::disk('s3')->size($filenametostore);
             $files -> type = $extension;
             $files -> version = $version;
         }
@@ -230,6 +247,7 @@ class FileController extends Controller
         $archivo_prev = $file->filename;
         $category_prev = $file->category_id;
         $user_prev = $file->id_user;
+        $id_file = $file->id;
 
         //CONSULTA PARA CARPETA ANTERIOR
         $name_category_prev = Category::where('id', '=', $category_prev)->get()->first();
@@ -258,6 +276,7 @@ class FileController extends Controller
         $recycled->user = $user_prev;
         $recycled->category = $folder_prev;
         $recycled->folder = $folder_prev;
+        $recycled->file_id = $id_file;
         // Guardar
         $recycled->save();
 

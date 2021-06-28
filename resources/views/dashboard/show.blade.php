@@ -57,6 +57,7 @@
         }
     ?>
 
+
         <div class="card-tools">
             <div class="btn-group">
                 <button type="button" class="btn btn-tool" onclick="CreateFile();">
@@ -64,6 +65,12 @@
                 </button>
                 <button type="button" class="btn btn-tool" onclick="CreateFolder();">
                     <i class="fas fa-plus-square"> Nueva carpeta</i>
+                </button>
+                <button type="button" id="seleccionar" class="btn btn-tool" onclick="Seleccionar();">
+                    <i class="fas fa-check-square"> Seleccionar archivos</i>
+                </button>
+                <button type="button" id="comprimir" style="display:none" class="btn btn-tool" onclick="Comprimir();">
+                    <i class="fas fa-file-archive"> Descargar zip</i>
                 </button>
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <i id="view" class="fas fa-table"></i>
@@ -83,50 +90,62 @@
 <div class="card-body">
 
 <div class="table-responsive" id="icons">
-<table id="icon" class="table" style="width:100%">
+
 <?php
+    $cont1=0;
     $cont=0;
 ?>
-    <tbody>
+    
         <form method="POST" action="{{route('dashboard')}}" id="form_details" autocomplete="off">
             @csrf
             <input type="hidden" value="{{$category_id}}" name="id_category" id="id_category">
             <input type="hidden" value="{{$category_name}}" name="name_category">
             <input type="hidden" value="{{$nivel_id}}" name="nivel_folder" id="nivel_folder">
+
+            <table id="icon" class="table" style="width:100%">
+            <tbody>
             @foreach ($folders as $folder)
                     <input type="hidden" value="{{$folder->id}}" name="id_folder" id="id_folder">
                     <input type="hidden" value="{{$folder->url}}" name="url_folder" id="url_folder">
                 <?php
-                $cont++;
-                if($cont % 7 == 0){
+                if($cont1 % 5 == 0){
                     echo '<tr></tr>';
                 }
+                $cont1++;
                 ?>
-                <td><input style="vertical-align: middle; float: left;" type="radio" name="radio_details" value="{{ $folder->id }}" onclick="FolderDetails(this.value);"/>
+                <td><input style="vertical-align: middle; float: left;" type="radio" name="radio_details" id="radiofolder_details<?php echo $cont1;?>" value="{{ $folder->id }}" onclick="FolderDetails(this.value);"/>
+                <input style="vertical-align: middle; float: left; display:none;" type="checkbox" name="chk_folder<?php echo $cont1;?>" id="chk_folder<?php echo $cont1;?>" value="{{ $folder->id }}"/>
                     <button onclick="DashSubmit('{{$folder->id}}');" style="background-color: Transparent; border: none; outline:none;" type="button">
-                    <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png" width="60%" heigth="60%">
+                    <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png" width="50%" heigth="50%">
                     </button><br/>
                     <span style="vertical-align: middle; float: left;">{{$folder->name}}</span>
                 </td>
             @endforeach
-            <tr></tr>
+            </tbody>
+            </table>
+            <table  class="table" style="width:100%">
+            <tbody>
             @foreach ($files as $file)
                 <?php
-                $cont++;
-                if($cont % 5 == 0){
+                if($cont % 4 == 0){
                     echo '<tr></tr>';
                 }
+                $cont++;
                 ?>
-                <td><input style="vertical-align: middle; float: left;" type="radio" name="radio_details" value="{{ $file->id }}" onclick="Details(this.value);"/>
+                <td><input style="vertical-align: middle; float: left;" type="radio" name="radio_details" id="radioicons_details<?php echo $cont;?>" value="{{ $file->id }}" onclick="Details(this.value);"/>
+                    <input style="vertical-align: middle; float: left; display:none;" type="checkbox" name="chk_icons<?php echo $cont;?>" id="chk_icons<?php echo $cont;?>" value="{{ $file->id }}"/>
                     <a href="#" onclick="DescargarFile({{ $file->id }});">
-                    <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/{{$file->type}}.png" width="18%" heigth="18%">
+                    <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/{{$file->type}}.png" width="19%" heigth="19%">
                     <br/><br/>{{$file->name}}</a>
                     
                 </td>
             @endforeach
+            <input type="hidden" value="{{$cont1}}" id="cont_folder">
+            <input type="hidden" value="{{$cont}}" id="cont_icons">
+            </tbody>
+            </table>
         </form>
-    </tbody>
-</table>
+    
 </div>
 
 
@@ -167,6 +186,7 @@
                         <th scope="col">Nombre del archivo</th>
                         <th scope="col">Detalles</th>
                         <th scope="col">Versión</th>
+                        <th scope="col">Usuario</th>
                         <th scope="col">Fecha de modificación</th>
                     </tr>
                 </thead>
