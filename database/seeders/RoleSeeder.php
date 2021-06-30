@@ -40,6 +40,11 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'categories.edit', 'description' => 'Editar directorios'])->assignRole($role1);
         //Permission::create(['name' => 'categories.destroy', 'description' => 'Eliminar directorios'])->assignRole($role1);
 
+        Permission::create(['name' => 'folders.index', 'description' => 'Lista de carpetas'])->assignRole($role1);
+        //Permission::create(['name' => 'folders.create', 'description' => 'Agregar directorios'])->assignRole($role1);
+        Permission::create(['name' => 'folders.edit', 'description' => 'Editar carpetas'])->assignRole($role1);
+        Permission::create(['name' => 'folders.destroy', 'description' => 'Eliminar carpetas'])->assignRole($role1);
+
         Permission::create(['name' => 'files.index', 'description' => 'Lista de archivos'])->assignRole($role1);
         //Permission::create(['name' => 'files.create', 'description' => 'Agregar archivos'])->assignRole($role1);
         Permission::create(['name' => 'files.edit', 'description' => 'Editar archivos'])->assignRole($role1);

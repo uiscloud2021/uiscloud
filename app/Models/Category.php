@@ -24,6 +24,6 @@ class Category extends Model
     }
 
     public function folders(){
-        return $this->hasMany(Folder::class);
+        return $this->hasMany(Folder::class, 'category_id');
     }
 }

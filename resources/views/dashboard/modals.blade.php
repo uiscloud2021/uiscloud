@@ -196,6 +196,7 @@
         <div class="form-group">
             {!! Form::hidden('nivel_editc', null, ['class' => 'form-control', 'id'=>'nivelfolderedit_id', 'readonly']) !!}
             {!! Form::hidden('category_id_editc', null, ['class' => 'form-control', 'id'=>'categoryfolderedit_id', 'readonly']) !!}
+            
         </div>
 
       </div>

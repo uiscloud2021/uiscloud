@@ -278,6 +278,13 @@ return [
             'can'  => 'categories.index',
         ],
         [
+            'text' => 'Carpetas',
+            'url'  => 'folders',
+            'icon' => 'fas fa-fw fa-folder',
+            'active' => ['folders*'],
+            'can'  => 'folders.index',
+        ],
+        [
             'text' => 'Archivos',
             'url'  => 'files',
             'icon' => 'fas fa-fw fa-file',

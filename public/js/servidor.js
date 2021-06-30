@@ -334,6 +334,7 @@ $('#formcreate_files').on('submit', function(e) {
 
 function DashSubmit(id_folder){
     $('#idppal_folder').val(id_folder);
+    $('#id_folder').val(id_folder);
     $('#form_details').submit();
 }
 
@@ -433,6 +434,8 @@ $('#formedit_folder').on('submit', function(e) {
                     toastr.success('La carpeta fue modificada correctamente', 'Actualizar carpeta', {timeOut:3000});
                     location.reload();
                     });
+                }else{
+                    toastr.warning('La carpeta no puede ser modificada porque existen archivos en su contenido', 'Actualizar carpeta', {timeOut:3000});
                 }
             }
         });

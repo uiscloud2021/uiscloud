@@ -21,6 +21,7 @@ class CreateFoldersTable extends Migration
             $table->unsignedBigInteger('nivel');
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('folder_id');
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users');

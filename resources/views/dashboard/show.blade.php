@@ -79,8 +79,8 @@
                     <a href="#" class="dropdown-item" onclick="Icon();"><i class="fas fa-table"> Iconos</i></a>
                     <a href="#" class="dropdown-item" onclick="List();"><i class="fas fa-list"> Lista</i></a>
                     <a class="dropdown-divider"></a>
-                    <input type="hidden" value="{{$url_folder}}" id="urlppal_folder">
-                    <input type="hidden" value="{{$folder_id}}" id="idppal_folder"> 
+                    <input type="hidden" value="{{$url_folder}}" id="urlppal_folder" name="urlppal_folder">
+                    <input type="hidden" value="{{$folder_id}}" id="idppal_folder" name="idppal_folder"> 
                 </div>
                 
             </div>
@@ -101,12 +101,12 @@
             <input type="hidden" value="{{$category_id}}" name="id_category" id="id_category">
             <input type="hidden" value="{{$category_name}}" name="name_category">
             <input type="hidden" value="{{$nivel_id}}" name="nivel_folder" id="nivel_folder">
+            <input type="hidden" name="id_folder" id="id_folder">
+            <input type="hidden" name="url_folder" id="url_folder"> 
 
             <table id="icon" class="table" style="width:100%">
             <tbody>
             @foreach ($folders as $folder)
-                    <input type="hidden" value="{{$folder->id}}" name="id_folder" id="id_folder">
-                    <input type="hidden" value="{{$folder->url}}" name="url_folder" id="url_folder">
                 <?php
                 if($cont1 % 5 == 0){
                     echo '<tr></tr>';

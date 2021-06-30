@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FolderController;
 use App\Http\Controllers\RecycledController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\RoleController;
@@ -36,6 +37,8 @@ Route::resource('users', UserController::class);
 Route::resource('roles', RoleController::class);
 
 Route::resource('categories', CategoryController::class);
+
+Route::resource('folders', FolderController::class);
 
 Route::resource('recycleds', RecycledController::class);
 

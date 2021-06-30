@@ -60,20 +60,22 @@ class DashController extends Controller
             ->where('nivel', $nivel_id)
             ->whereHas('users', function($query) use($current_user){
                 $query->where('user_id', '=', $current_user);
-            })->get();
+            })->orderBy('name')->get();
 
             $folders = Folder::where('nivel', '=', $nivel_id)
             ->where('category_id', $category_id)
             ->whereHas('users', function($query) use($current_user){
                 $query->where('user_id', '=', $current_user);
-            })->get();
+            })->orderBy('name')->get();
 
         }else{
             $folder_id = $request->id_folder;
-            $url_folder = $request->url_folder;
+            //$url_folder = $request->url_folder;
 
             $fold = Folder::where('id', '=', $folder_id)->get()->first();
             $folder_name = $fold->name;
+            $url_folder = $fold->url;
+
 
             $files = File::where('category_id', $category_id)
             ->where('nivel', $nivel_id)
@@ -84,6 +86,7 @@ class DashController extends Controller
 
             $folders = Folder::where('nivel', '=', $nivel_id)
             ->where('category_id', $category_id)
+            ->where('folder_id', $folder_id)
             ->whereHas('users', function($query) use($current_user){
                 $query->where('user_id', '=', $current_user);
             })->get();
@@ -536,20 +539,27 @@ class DashController extends Controller
                 //CREAR CARPETA(directorio) EN S3
                 Storage::makeDirectory($directory."/".$folder_new);
                 $url=$directory."/".$folder_new;
+                $id_folder=0;
             }else{
                 $url_ant = $request->url_addc;
                 Storage::makeDirectory($url_ant."/".$folder_new);
                 $url=$url_ant."/".$folder_new;
-            }
 
+                $name_fold = explode('/',$url);
+                $separar=$nivel-1;
+                $nom_fold = Folder::where('name', '=', $name_fold[$separar])->get()->first();
+                $id_folder = $nom_fold->id;
+            }
+            $new_url = $url;
             //GUARDAR REGISTROS
             $folders = new Folder();
             $folders -> name = $folder_new;
-            $folders -> url = $url;
+            $folders -> url = $new_url;
             $folders -> contenido = '0';
             $folders -> nivel = $nivel;
             $folders -> id_user = $current_user;
             $folders -> category_id = $category_id;
+            $folders -> folder_id = $id_folder;
             //GUARDAR
             $folders -> save();
 
@@ -583,35 +593,48 @@ class DashController extends Controller
         if($request->ajax()){
             $current_user = auth()->id();
             $id_folder = $request->id;
+            $category_id = $request->category_id_editc;
+            $nivel = $request->nivel_editc;
 
             //CARGAR LOS DATOS DEL ARCHIVO
             $folder_prev = Folder::where('id', '=', $id_folder)->get()->first();
             $url_prev = $folder_prev->url;
-
-            //LE PASO EL NOMBRE DE LA CARPETA
-            $category_id = $request->category_id_editc;
-            $nivel = $request->nivel_editc;
+            $contenido = $folder_prev->contenido;
+            $dir_folder_id = $folder_prev->folder_id;
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $directory = $name_category->name;
 
             //LE PASO EL NOMBRE DE LA CARPETA
             $folder_new = $request->name_editc;
+
+            
             //CREAR CARPETA(directorio) EN S3
-            Storage::deleteDirectory($url_prev);
-            Storage::makeDirectory($directory."/".$folder_new);
+            if($contenido==0){
+                Storage::deleteDirectory($url_prev);
+                if($nivel==1){
+                    $url=$directory."/".$folder_new;
+                    Storage::makeDirectory($url);
+                }else{
+                    $dirfolder = Folder::where('id', '=', $dir_folder_id)->get()->first();
+                    $url_dirfolder = $dirfolder->url;
+                    $url=$url_dirfolder."/".$folder_new;
+                    Storage::makeDirectory($url);
+                }
+                //GUARDAR CAMBIOS
+                $folders = Folder::find($id_folder);
+                $folders -> name = $folder_new;
+                $folders -> url = $url;
+                $folders -> id_user = $current_user;
+                //guarda
+                $folders -> save();
 
-            $url=$directory."/".$folder_new;
+                return response("actualizado");
+            }else{
+                return response("noactualizado");
+            }
 
-            //GUARDAR CAMBIOS
-            $folders = Folder::find($id_folder);
-            $folders -> name = $folder_new;
-            $folders -> url = $url;
-            $folders -> id_user = $current_user;
-            //guarda
-            $folders -> save();
-
-            return response("actualizado");
+            
          }
     }
 
