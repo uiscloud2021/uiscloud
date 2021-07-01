@@ -547,7 +547,8 @@ class DashController extends Controller
 
                 $name_fold = explode('/',$url);
                 $separar=$nivel-1;
-                $nom_fold = Folder::where('name', '=', $name_fold[$separar])->get()->first();
+                //$nom_fold = Folder::where('name', '=', $name_fold[$separar])->get()->first();
+                $nom_fold = Folder::where('url', '=', $url_ant)->get()->first();
                 $id_folder = $nom_fold->id;
             }
             $new_url = $url;
