@@ -22,6 +22,7 @@
     <thead class="bg-primary text-white">
         <tr>
             <th scope="col">Nombre</th>
+            <th scope="col">URL</th>
             <th scope="col"></th>
             <th scope="col"></th>
         </tr>
@@ -30,6 +31,7 @@
         @foreach ($folders as $folder)
             <tr>
                 <td>{{ $folder->name }}</td>
+                <td>{{ $folder->url }}</td>
                 <td width="10px"><a class="btn btn-info btn-sm" href="{{route('folders.edit', $folder)}}">Editar</a></td>
                 <td width="10px">
                 <form action="{{route('folders.destroy',$folder)}}" method="POST">

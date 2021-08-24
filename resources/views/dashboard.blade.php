@@ -53,10 +53,10 @@
                     <input type="hidden" value="{{$category->name}}" name="name_category">
                     <input type="hidden" value="0" name="nivel_folder">
                     <?php
-                    $cont++;
-                    if($cont % 7 == 0){
+                    if($cont % 6 == 0){
                         echo '<tr></tr>';
                     }
+                    $cont++;
                     ?>
                     <td><button style="background-color: Transparent; border: none; outline:none;" type="submit">
                         <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/folder{{$category->contenido}}.png" width="60%" heigth="60%">
