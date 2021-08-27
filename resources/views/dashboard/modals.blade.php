@@ -208,3 +208,43 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+<!-- Modal CREAR ZIP-->
+<div class="modal fade" id="createZIPModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createZIPModalLabel">Subir carpeta ZIP</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Cancelar">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {!! Form::open(['autocomplete' => 'off', 'method'=>'POST', 'enctype' => 'multipart/form-data', 'id'=>'formcreate_zip', 'files' => true]) !!}
+      <div class="modal-body">
+
+        <div class="form-group">
+            {!! Form::label('archivo_addz', 'Archivo ZIP', ['class' => 'form-label']) !!}
+            {!! Form::file('archivo_addz', ['class' => 'form-control-file', 'id' => 'archivo_addz', 'enctype' => 'multipart/form-data', 'accept' => '.zip,.7zip']) !!}
+
+        </div>
+
+        <div class="form-group">
+            {!! Form::hidden('category_id_addz', null, ['class' => 'form-control', 'id'=>'categoryzip_id', 'readonly']) !!}
+            {!! Form::hidden('nivel_addz', null, ['class' => 'form-control', 'id'=>'nivelzip_id', 'readonly']) !!}
+            {!! Form::hidden('idfolder_addz', null, ['class' => 'form-control', 'id'=>'folderzip_id', 'readonly']) !!}
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" id="btnSubirZIP" class="btn btn-primary">Subir</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>

@@ -369,7 +369,7 @@ class DashController extends Controller
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
-            /*/GUARDAR ARCHIVO EN S3
+            /*/GUARDAR ARCHIVO EN S35
             if($id_folder != 0){
                 $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
                 $url_folder = $cons_folder->url;
@@ -686,6 +686,101 @@ class DashController extends Controller
             }*/
             
         }
+    }
+
+
+
+    public function created_zip(Request $request)
+    {
+        if($request->ajax()){
+            $time=Carbon::now();
+            $current_user = auth()->id();
+            //LE PASO EL NOMBRE DE LA CARPETA
+            $category_id = $request->category_id_addz;
+            $nivel = $request->nivel_addz;
+            $id_folder = $request->idfolder_addz;
+            $filezip = $request->file('archivo_addz');
+
+            $name_category = Category::where('id', '=', $category_id)->get()->first();
+            $folder = $name_category->name;
+
+            $nombresFichZIP = array();
+            $zip = new ZipArchive;
+            if ($zip->open($filezip) === TRUE){
+                for($i = 0; $i < $zip->numFiles; $i++){
+	                //obtenemos ruta que tendrán los documentos cuando los descomprimamos
+	                $nombresFichZIP['tmp_name'][$i] = 'prueba/'.$zip->getNameIndex($i);
+	                //obtenemos nombre del fichero con extension
+	                $nombresFichZIP['name'][$i] = $zip->getNameIndex($i);
+                    //get filename without extension
+                    $filename[$i] = pathinfo($nombresFichZIP['name'][$i], PATHINFO_FILENAME);
+                    //get file extension
+                    $extension[$i] = pathinfo($nombresFichZIP['name'][$i], PATHINFO_EXTENSION);
+
+                    $filenameoriginal[$i] = $filename[$i].'_'.$time.'.'.$extension[$i];
+
+                    if($id_folder != 0){
+                        $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
+                        $url_folder = $cons_folder->url;
+                        //filename to store
+                        $filenametostore[$i] = $url_folder."/".$filenameoriginal[$i];
+                        //Upload File to s3
+                        Storage::disk('s3')->put($filenametostore[$i], 'public');
+                    }else{
+                        //filename to store
+                        $filenametostore[$i] = $folder."/".$filenameoriginal[$i];
+                        Storage::disk('s3')->put($filenametostore[$i], 'public');
+                    }
+
+                    $version[$i]="1";
+                    //VERIFICAR VERSIONAMIENTO
+                    if($extension[$i] == "doc" || $extension[$i] == "docx" || $extension[$i] == "xls" || $extension[$i] == "xlsx" || $extension[$i] == "vsd" || $extension[$i] == "ppt" || $extension[$i] == "pptx"){
+                        $versionamiento[$i]="No";
+                    }else{
+                        $versionamiento[$i]="Si";
+                    }
+
+                    //GUARDAR REGISTROS
+                    $files[$i] = new File();
+                    $files[$i] -> name = $filename[$i];
+                    $files[$i] -> filename = $filenameoriginal[$i];
+                    $files[$i] -> url = Storage::disk('s3')->url($filenametostore[$i]);
+                    $files[$i] -> size = Storage::disk('s3')->size($filenametostore[$i]);
+                    $files[$i] -> type = $extension[$i];
+                    $files[$i] -> version = $version[$i];
+                    $files[$i] -> id_user = $current_user;
+                    $files[$i] -> category_id = $category_id;
+                    $files[$i] -> versionamiento = $versionamiento[$i];
+                    $files[$i] -> bloqueado = '0';
+                    $files[$i] -> user_block = "";
+                    $files[$i] -> id_folder = $id_folder;
+                    $files[$i] -> nivel = $nivel;
+                    //GUARDAR
+                    $files[$i] -> save();
+
+                    //GUARDAR LA RELACION DE LOS USUARIOS PARA EL ARCHIVO
+                    $users[$i] = User::whereHas('categories', function($query) use($category_id){
+                        $query->where('category_id', '=', $category_id);
+                    })->get();
+                    foreach ($users[$i] as $us[$i]){
+                        $files[$i]->users()->attach($us[$i]->id);
+                    }
+                }
+            }
+            //GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
+            $categ = Category::find($category_id);
+            $categ -> contenido = '1';
+            $categ -> save();
+
+            if($id_folder != 0){
+                //GUARDAR CONTENIDO EN FOLDER (CARPETA LLENA O VACIA)
+                $fold = Folder::find($id_folder);
+                $fold -> contenido = '1';
+                $fold -> save();
+            }
+            
+            return response("guardado");
+         }
     }
 
     

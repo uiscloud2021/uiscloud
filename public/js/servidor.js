@@ -299,6 +299,16 @@ function CreateFile(){
     $('#folderfile_id').val(id_folder);
 }
 
+function CreateZIP(){
+    $('#createZIPModal').modal('toggle');
+    category=$('#id_category').val();
+    $('#categoryzip_id').val(category);
+    nivel=$('#nivel_folder').val();
+    $('#nivelzip_id').val(nivel);
+    id_folder=$('#idppal_folder').val();
+    $('#folderzip_id').val(id_folder);
+}
+
 $('#formcreate_files').on('submit', function(e) {
     e.preventDefault();
     var formData = new FormData(this);
@@ -328,6 +338,38 @@ $('#formcreate_files').on('submit', function(e) {
         });
     }else{
         alert("No puede estar ningun campo vacío");
+    }
+});
+
+
+$('#formcreate_zip').on('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('_token', $('input[name=_token]').val());
+    archivo=$('#archivo_addz').val();
+    if(archivo!=""){
+        $.ajax({
+            url: "/dashboard/created_zip",
+            type:'post',
+            data:formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            beforeSend:function(){
+                $('#btnSubirZIP').hide();
+            },
+            success:function(resp){
+                if(resp == "guardado"){
+                    setTimeout(function(){
+                    $('#createZIPModal').modal('hide');
+                    toastr.success('El archivo zip fue subido correctamente', 'Subir archivo', {timeOut:3000});
+                    location.reload();
+                    });
+                }
+            }
+        });
+    }else{
+        alert("No puede estar el archivo vacío");
     }
 });
 

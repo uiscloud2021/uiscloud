@@ -60,18 +60,21 @@
 
         <div class="card-tools">
             <div class="btn-group">
-                <button type="button" class="btn btn-tool" onclick="CreateFile();">
-                    <i class="fas fa-plus"> Nuevo archivo</i>
-                </button>
-                <button type="button" class="btn btn-tool" onclick="CreateFolder();">
-                    <i class="fas fa-plus-square"> Nueva carpeta</i>
-                </button>
-                <button type="button" id="seleccionar" class="btn btn-tool" onclick="Seleccionar();">
-                    <i class="fas fa-check-square"> Seleccionar archivos</i>
-                </button>
-                <button type="button" id="comprimir" style="display:none" class="btn btn-tool" onclick="Comprimir();">
-                    <i class="fas fa-file-archive"> Descargar zip</i>
-                </button>
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i id="view" class="fas fa-cogs"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#" onclick="CreateFile();"><i class="fas fa-plus"> Cargar archivo</i></a>
+                        <a class="dropdown-item" href="#" onclick="CreateFolder();"><i class="fas fa-plus-square"> Crear carpeta</i></a>
+                        <a class="dropdown-item" href="#" onclick="CreateZIP();"><i class="fas fa-file-archive"> Cargar carpeta zip</i></a>
+                        <a class="dropdown-item" href="#" id="seleccionar" onclick="Seleccionar();"><i class="fas fa-check-square"> Seleccionar archivos</i></a>
+                        <a class="dropdown-item" href="#" style="display:none" id="comprimir" onclick="Comprimir();"><i class="fas fa-download"> Descargar zip</i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <i id="view" class="fas fa-table"></i>
                 </button>
@@ -82,8 +85,8 @@
                     <input type="hidden" value="{{$url_folder}}" id="urlppal_folder" name="urlppal_folder">
                     <input type="hidden" value="{{$folder_id}}" id="idppal_folder" name="idppal_folder"> 
                 </div>
-                
             </div>
+            
         </div>
     </div>
 
