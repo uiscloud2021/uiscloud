@@ -736,8 +736,6 @@ class DashController extends Controller
             if(file_exists($ziptopath)){
                 $directorio = Storage::disk('s3')->put("ZIP/$zipFileName", file_get_contents($ziptopath), 'public');
                 $url = Storage::disk('s3')->url("ZIP/".$zipFileName);
-                //ELIMINAMOS EL ARCHIVO LOCAL
-                //unlink($ziptopath);
             }
 
             $nombresFichZIP = array();
@@ -777,7 +775,7 @@ class DashController extends Controller
                         $versionamiento[$i]="Si";
                     }
 
-                    /*/GUARDAR REGISTROS
+                    //GUARDAR REGISTROS
                     $files[$i] = new File();
                     $files[$i] -> name = $filename[$i];
                     $files[$i] -> filename = $filenameoriginal[$i];
@@ -801,12 +799,15 @@ class DashController extends Controller
                     })->get();
                     foreach ($users[$i] as $us[$i]){
                         $files[$i]->users()->attach($us[$i]->id);
-                    }*/
+                    }
                 }
                 $zip2->close();
             }
+
+            //ELIMINAMOS EL ARCHIVO LOCAL
+            unlink($ziptopath);
             
-            /*/GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
+            //GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
             $categ = Category::find($category_id);
             $categ -> contenido = '1';
             $categ -> save();
@@ -816,8 +817,7 @@ class DashController extends Controller
                 $fold = Folder::find($id_folder);
                 $fold -> contenido = '1';
                 $fold -> save();
-            }*/
-            //return $nombresFichZIP['name'][1];
+            }
             return response('guardado');
         }
     }

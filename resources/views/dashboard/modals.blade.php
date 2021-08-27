@@ -228,7 +228,7 @@
       <div class="modal-body">
 
         <div class="form-group">
-            {!! Form::label('archivo_addz', 'Archivo ZIP', ['class' => 'form-label']) !!}
+            {!! Form::label('archivo_addz', 'Archivos (Solo documentos, sin carpetas)', ['class' => 'form-label']) !!}
             {!! Form::file('archivo_addz[]', ['class' => 'form-control-file', 'id' => 'archivo_addz', 'enctype' => 'multipart/form-data', 'multiple']) !!}
             
             {{--{!! Form::file('archivo_addz', ['class' => 'form-control-file', 'id' => 'archivo_addz', 'enctype' => 'multipart/form-data', 'accept' => '.zip,.7zip']) !!}--}}
