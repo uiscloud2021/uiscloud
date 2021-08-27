@@ -706,10 +706,11 @@ class DashController extends Controller
 
             $nombresFichZIP = array();
             $zip = new ZipArchive;
-            if ($zip->open($filezip) === TRUE){
+            $res = $zip->open($filezip, ZipArchive::CREATE);
+            if ($res === TRUE){
                 for($i = 0; $i < $zip->numFiles; $i++){
 	                //obtenemos ruta que tendrán los documentos cuando los descomprimamos
-	                $nombresFichZIP['tmp_name'][$i] = 'prueba/'.$zip->getNameIndex($i);
+	                //$nombresFichZIP['tmp_name'][$i] = 'prueba/'.$zip->getNameIndex($i);
 	                //obtenemos nombre del fichero con extension
 	                $nombresFichZIP['name'][$i] = $zip->getNameIndex($i);
                     //get filename without extension
