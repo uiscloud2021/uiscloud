@@ -704,11 +704,15 @@ class DashController extends Controller
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
 
-            $destination = "https://uiscloud.s3.us-east-2.amazonaws.com/Recycled/".$filezip;
+            //SUBO EL ARCHIVO ZIP
+            //$public_dir=public_path();
+            //$filetopath=$public_dir.'/'.$filezip;
+            //$destination = Storage::disk('s3')->put("ZIP/$filezip", file_get_contents($filetopath), 'public');
+            //$url = Storage::disk('s3')->url("ZIP/".$filezip);
             $nombresFichZIP = array();
             $zip = new ZipArchive;
-            $res = $zip->open($destination, ZipArchive::CREATE);
-            if ($res === TRUE){
+            //$res = $zip->open($destination, ZipArchive::CREATE);
+            if ($zip->open($filezip, ZipArchive::CREATE) === TRUE){
                 for($i = 0; $i < $zip->numFiles; $i++){
 	                //obtenemos ruta que tendrán los documentos cuando los descomprimamos
 	                //$nombresFichZIP['tmp_name'][$i] = 'prueba/'.$zip->getNameIndex($i);
@@ -768,7 +772,9 @@ class DashController extends Controller
                         $files[$i]->users()->attach($us[$i]->id);
                     }
                 }
+                $zip->close();
             }
+            
             //GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
             $categ = Category::find($category_id);
             $categ -> contenido = '1';
