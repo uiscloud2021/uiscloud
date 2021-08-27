@@ -704,9 +704,10 @@ class DashController extends Controller
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
 
+            $destination = "https://uiscloud.s3.us-east-2.amazonaws.com/Recycled/".$filezip;
             $nombresFichZIP = array();
             $zip = new ZipArchive;
-            $res = $zip->open($filezip, ZipArchive::CREATE);
+            $res = $zip->open($destination, ZipArchive::CREATE);
             if ($res === TRUE){
                 for($i = 0; $i < $zip->numFiles; $i++){
 	                //obtenemos ruta que tendrán los documentos cuando los descomprimamos
