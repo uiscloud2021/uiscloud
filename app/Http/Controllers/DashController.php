@@ -699,7 +699,9 @@ class DashController extends Controller
             $category_id = $request->category_id_addz;
             $nivel = $request->nivel_addz;
             $id_folder = $request->idfolder_addz;
+            
             $filezip = $request->file('archivo_addz');
+            //$file_count = count($filezip);
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
@@ -709,15 +711,44 @@ class DashController extends Controller
             //$filetopath=$public_dir.'/'.$filezip;
             //$destination = Storage::disk('s3')->put("ZIP/$filezip", file_get_contents($filetopath), 'public');
             //$url = Storage::disk('s3')->url("ZIP/".$filezip);
-            $nombresFichZIP = array();
             $zip = new ZipArchive;
-            //$res = $zip->open($destination, ZipArchive::CREATE);
-            if ($zip->open($filezip, ZipArchive::CREATE) === TRUE){
-                for($i = 0; $i < $zip->numFiles; $i++){
+
+            $public_dir=public_path();
+        	// Zip File Name
+            $zipFileName = 'CreateZIP'.time().'.zip';
+
+            if ($zip->open($public_dir.'/'.$zipFileName, ZipArchive::CREATE) === TRUE) {    
+                // Add Multiple file 
+                foreach($filezip as $fzip) {
+                   // $zip->addFile($dir.'/' . $fzip->getClientOriginalName());
+                    $content = file_get_contents($fzip);
+                    $zip->addFromString(pathinfo ( $fzip->getClientOriginalName(), PATHINFO_BASENAME), $content);
+                    
+                }        
+                $zip->close();
+            }
+            // Set Header
+            $headers = array(
+                'Content-Type' => 'application/octet-stream',
+            );
+            $ziptopath=$public_dir.'/'.$zipFileName;
+            // Create Download Response
+            if(file_exists($ziptopath)){
+                $directorio = Storage::disk('s3')->put("ZIP/$zipFileName", file_get_contents($ziptopath), 'public');
+                $url = Storage::disk('s3')->url("ZIP/".$zipFileName);
+                //ELIMINAMOS EL ARCHIVO LOCAL
+                //unlink($ziptopath);
+            }
+
+            $nombresFichZIP = array();
+            $zip2 = new ZipArchive;
+
+            if ($zip2->open($ziptopath) === TRUE){
+                for($i = 0; $i < $zip2->numFiles; $i++){
 	                //obtenemos ruta que tendrán los documentos cuando los descomprimamos
 	                //$nombresFichZIP['tmp_name'][$i] = 'prueba/'.$zip->getNameIndex($i);
 	                //obtenemos nombre del fichero con extension
-	                $nombresFichZIP['name'][$i] = $zip->getNameIndex($i);
+	                $nombresFichZIP['name'][$i] = $zip2->getNameIndex($i);
                     //get filename without extension
                     $filename[$i] = pathinfo($nombresFichZIP['name'][$i], PATHINFO_FILENAME);
                     //get file extension
@@ -746,7 +777,7 @@ class DashController extends Controller
                         $versionamiento[$i]="Si";
                     }
 
-                    //GUARDAR REGISTROS
+                    /*/GUARDAR REGISTROS
                     $files[$i] = new File();
                     $files[$i] -> name = $filename[$i];
                     $files[$i] -> filename = $filenameoriginal[$i];
@@ -770,12 +801,12 @@ class DashController extends Controller
                     })->get();
                     foreach ($users[$i] as $us[$i]){
                         $files[$i]->users()->attach($us[$i]->id);
-                    }
+                    }*/
                 }
-                $zip->close();
+                $zip2->close();
             }
             
-            //GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
+            /*/GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
             $categ = Category::find($category_id);
             $categ -> contenido = '1';
             $categ -> save();
@@ -785,10 +816,10 @@ class DashController extends Controller
                 $fold = Folder::find($id_folder);
                 $fold -> contenido = '1';
                 $fold -> save();
-            }
-            
-            return response("guardado");
-         }
+            }*/
+            //return $nombresFichZIP['name'][1];
+            return response('guardado');
+        }
     }
 
     
