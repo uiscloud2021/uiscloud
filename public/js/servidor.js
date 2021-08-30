@@ -359,14 +359,13 @@ $('#formcreate_zip').on('submit', function(e) {
                 $('#btnSubirZIP').hide();
             },
             success:function(resp){
-                alert(resp);
-                /*if(resp == "guardado"){
+                if(resp == "guardado"){
                     setTimeout(function(){
                     $('#createZIPModal').modal('hide');
                     toastr.success('Los archivos fueron subidos correctamente', 'Subir archivos', {timeOut:3000});
                     location.reload();
                     });
-                }*/
+                }
             }
         });
     }else{
