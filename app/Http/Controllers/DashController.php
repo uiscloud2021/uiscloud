@@ -401,7 +401,7 @@ class DashController extends Controller
                 Storage::disk('s3')->put($filenametostore, 'public');
             }
             
-            $extension = $request->file('archivo_addf')->extension();
+            //$extension = $request->file('archivo_addf')->extension();
             $version="1";
 
             //VERIFICAR VERSIONAMIENTO
@@ -701,26 +701,21 @@ class DashController extends Controller
             $id_folder = $request->idfolder_addz;
             
             $filezip = $request->file('archivo_addz');
-            //$file_count = count($filezip);
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
 
             //SUBO EL ARCHIVO ZIP
-            //$public_dir=public_path();
-            //$filetopath=$public_dir.'/'.$filezip;
-            //$destination = Storage::disk('s3')->put("ZIP/$filezip", file_get_contents($filetopath), 'public');
-            //$url = Storage::disk('s3')->url("ZIP/".$filezip);
             $zip = new ZipArchive;
 
             $public_dir=public_path();
         	// Zip File Name
             $zipFileName = 'CreateZIP'.time().'.zip';
+            $zip->open($public_dir.'/'.$zipFileName, ZipArchive::CREATE);
 
             if ($zip->open($public_dir.'/'.$zipFileName, ZipArchive::CREATE) === TRUE) {    
                 // Add Multiple file 
                 foreach($filezip as $fzip) {
-                   // $zip->addFile($dir.'/' . $fzip->getClientOriginalName());
                     $content = file_get_contents($fzip);
                     $zip->addFromString(pathinfo ( $fzip->getClientOriginalName(), PATHINFO_BASENAME), $content);
                     
@@ -743,8 +738,6 @@ class DashController extends Controller
 
             if ($zip2->open($ziptopath) === TRUE){
                 for($i = 0; $i < $zip2->numFiles; $i++){
-	                //obtenemos ruta que tendrán los documentos cuando los descomprimamos
-	                //$nombresFichZIP['tmp_name'][$i] = 'prueba/'.$zip->getNameIndex($i);
 	                //obtenemos nombre del fichero con extension
 	                $nombresFichZIP['name'][$i] = $zip2->getNameIndex($i);
                     //get filename without extension
