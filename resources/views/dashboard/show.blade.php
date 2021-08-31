@@ -65,8 +65,8 @@
                         <i id="view" class="fas fa-cogs"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#" onclick="CreateFile();"><i class="fas fa-plus"> Cargar archivo</i></a>
-                        <a class="dropdown-item" href="#" onclick="CreateFolder();"><i class="fas fa-plus-square"> Crear carpeta</i></a>
+                        <a class="dropdown-item" href="#" onclick="CreateFolder();"><i class="fas fa-plus-square"> Crear carpeta</i></a>    
+                        <a class="dropdown-item" href="#" onclick="CreateFile();"><i class="fas fa-plus"> Cargar un archivo</i></a>
                         <a class="dropdown-item" href="#" onclick="CreateZIP();"><i class="fas fa-file-upload"> Cargar varios archivos</i></a>
                         <a class="dropdown-item" href="#" id="seleccionar" onclick="Seleccionar();"><i class="fas fa-check-square"> Seleccionar archivos</i></a>
                         <a class="dropdown-item" href="#" style="display:none" id="comprimir" onclick="Comprimir();"><i class="fas fa-download"> Descargar zip</i></a>

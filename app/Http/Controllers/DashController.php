@@ -701,17 +701,92 @@ class DashController extends Controller
             $id_folder = $request->idfolder_addz;
             
             $filezip = $request->file('archivo_addz');
+            $filecount = count($filezip);
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $folder = $name_category->name;
 
-            //SUBO EL ARCHIVO ZIP
-            $zip = new ZipArchive;
+            
 
+            foreach($filezip as $filename) {
+                $name = $filename->getClientOriginalName();
+                //name file sin extension
+                $name_sinext = pathinfo($name, PATHINFO_FILENAME);
+                //extension file
+                $extension = $filename->getClientOriginalExtension();
+                $filenameoriginal = $name_sinext.'_'.$time.'.'.$extension;
+
+                if($id_folder != 0){
+                    $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
+                    $url_folder = $cons_folder->url;
+                    //filename to store
+                    $filenametostore = $url_folder."/".$filenameoriginal;
+                    //Upload File to s3
+                    Storage::disk('s3')->put($filenametostore, 'public');
+                }else{
+                    //filename to store
+                    $filenametostore = $folder."/".$filenameoriginal;
+                    Storage::disk('s3')->put($filenametostore, 'public');
+                }    
+  
+                $version="1";
+                //VERIFICAR VERSIONAMIENTO
+                if($extension == "doc" || $extension == "docx" || $extension == "xls" || $extension == "xlsx" || $extension == "vsd" || $extension == "ppt" || $extension == "pptx"){
+                    $versionamiento="No";
+                }else{
+                    $versionamiento="Si";
+                }
+
+                //GUARDAR REGISTROS
+                $files = new File();
+                $files -> name = $name_sinext;
+                $files -> filename = $filenameoriginal;
+                $files -> url = Storage::disk('s3')->url($filenametostore);
+                $files -> size = Storage::disk('s3')->size($filenametostore);
+                $files -> type = $extension;
+                $files -> version = $version;
+                $files -> id_user = $current_user;
+                $files -> category_id = $category_id;
+                $files -> versionamiento = $versionamiento;
+                $files -> bloqueado = '0';
+                $files -> user_block = "";
+                $files -> id_folder = $id_folder;
+                $files -> nivel = $nivel;
+                //GUARDAR
+                $files -> save();
+
+                //GUARDAR LA RELACION DE LOS USUARIOS PARA EL ARCHIVO
+                $users = User::whereHas('categories', function($query) use($category_id){
+                    $query->where('category_id', '=', $category_id);
+                })->get();
+                foreach ($users as $us){
+                    $files->users()->attach($us->id);
+                }
+                    
+            }
+
+            //GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
+            $categ = Category::find($category_id);
+            $categ -> contenido = '1';
+            $categ -> save();
+
+            if($id_folder != 0){
+                //GUARDAR CONTENIDO EN FOLDER (CARPETA LLENA O VACIA)
+                $fold = Folder::find($id_folder);
+                $fold -> contenido = '1';
+                $fold -> save();
+            }
+
+            return response('guardado');
+            
+            
+
+            /*/SUBO EL ARCHIVO ZIP
+            $zip = new ZipArchive;
+            $nombresFichZIP = array();
             $public_dir=public_path();
         	// Zip File Name
             $zipFileName = 'CreateZIP'.time().'.zip';
-            $zip->open($public_dir.'/'.$zipFileName, ZipArchive::CREATE);
 
             if ($zip->open($public_dir.'/'.$zipFileName, ZipArchive::CREATE) === TRUE) {    
                 // Add Multiple file 
@@ -731,7 +806,8 @@ class DashController extends Controller
             if(file_exists($ziptopath)){
                 $directorio = Storage::disk('s3')->put("ZIP/$zipFileName", file_get_contents($ziptopath), 'public');
                 $url = Storage::disk('s3')->url("ZIP/".$zipFileName);
-            }
+            }*/
+            /*
 
             $nombresFichZIP = array();
             $zip2 = new ZipArchive;
@@ -795,9 +871,9 @@ class DashController extends Controller
                     }
                 }
                 $zip2->close();
-            }
+            }*/
 
-            //ELIMINAMOS EL ARCHIVO LOCAL
+            /*/ELIMINAMOS EL ARCHIVO LOCAL
             unlink($ziptopath);
             
             //GUARDAR CONTENIDO EN CATEGORIA (CARPETA LLENA O VACIA)
@@ -810,8 +886,9 @@ class DashController extends Controller
                 $fold = Folder::find($id_folder);
                 $fold -> contenido = '1';
                 $fold -> save();
-            }
-            return response('guardado');
+            }*/
+            
+            //return response('guardado');
         }
     }
 
