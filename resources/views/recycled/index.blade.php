@@ -67,7 +67,7 @@
         <tr>
             <th scope="col"></th>
             <th scope="col">Nombre</th>
-            <th scope="col">Fecha de modificación</th>
+            <th scope="col">Modificación</th>
             <th scope="col">Directorio anterior</th>
             <th scope="col">Versión</th>
             <th scope="col">Usuario</th>
@@ -80,7 +80,7 @@
                 <td width="7%"><img src="vendor/adminlte/dist/img/icons/{{$recycled->type}}.png" width="90%" heigth="90%"></td>
                 <td><a target="_blank" href="{{$recycled->url_new}}">{{ $recycled->name }}</a></td>
                 <td>{{ $recycled->created_at }}</td>
-                <td>{{ $recycled->category }}</td>
+                <td>{{ $recycled->folder }}</td>
                 <td>{{ $recycled->version }}</td>
                 <td>{{ $recycled->user }}</td>
                 <td width="10px"><a class="btn btn-info btn-sm" target="_blank" href="{{$recycled->url_new}}">Descargar</a></td>

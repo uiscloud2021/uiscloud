@@ -4,16 +4,14 @@
 
 @section('content_header')
 <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
+    <div class="row mb-2">
+        <div class="col-sm-6">
             <ol class="breadcrumb float-sm-left">
               <li class="breadcrumb-item active" style="font-size:16px; font-weight:bold;"><a> Servidor UIS</a></li>
             </ol>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            
-          </div><!-- /.col -->
-        </div><!-- /.row -->
+        </div><!-- /.col -->
+        <div class="col-sm-6"></div><!-- /.col -->
+    </div><!-- /.row -->
 </div>
 @stop
 
@@ -22,8 +20,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">Servidor UIS</h5>
-
+        <h5 class="card-title"><i class="far fa-folder"></i> Mis directorios</h5>
         <div class="card-tools">
             <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -38,72 +35,60 @@
         </div>
     </div>
 
-<div class="card-body">
+    <div class="card-body">
 
-<div class="table-responsive" id="icons">
-<table id="icon" class="table" style="width:100%">
-<?php
-    $cont=0;
-?>
-    <tbody>
-            @foreach ($categories as $category)
-                <form action="{{route('dashboard')}}" method="POST">
-                    @csrf
-                    <input type="hidden" value="{{$category->id}}" name="id_category">
-                    <input type="hidden" value="{{$category->name}}" name="name_category">
-                    <input type="hidden" value="0" name="nivel_folder">
-                    <?php
-                    if($cont % 6 == 0){
-                        echo '<tr></tr>';
-                    }
-                    $cont++;
-                    ?>
-                    <td><button style="background-color: Transparent; border: none; outline:none;" type="submit">
-                        <img style="vertical-align: middle; float: left;" src="vendor/adminlte/dist/img/icons/folder{{$category->contenido}}.png" width="60%" heigth="60%">
-                        </button><br/>
-                        <span style="vertical-align: middle; float: left;">{{$category->name}}</span>
-                    </td>
-                
-                </form>
-            @endforeach
-    </tbody>
-</table>
-</div>
+        <div id="icons">
+            <form action="{{route('dashboard')}}" id="form_directorios" method="POST">
+                @csrf
+                <input type="hidden" name="id_category" id="category_id">
+                <input type="hidden" value="0" name="nivel_folder">
+                <div class="row" id="icon">
+                    @foreach ($categories as $category)
+                        <?php
+                        $icono = strtolower($category->contenido);
+                        ?>
+
+                        <div class="col-md-3" style="padding: 1em; text-align:center;">
+                            <button onclick="Directorios('{{$category->id}}');" style="background-color: Transparent; border: none; outline:none;" type="button">
+                            <img width="80%" heigth="80%" src="vendor/adminlte/dist/img/icons/folder{{$icono}}.png" >
+                            </button><br/>
+                            <h5>{{$category->name}}</h5>
+                            <h6>{{date("d-M-y", strtotime($category->created_at))}}</h6>
+                        </div>
+                    @endforeach
+                </div>
+            </form>
+        </div>
 
 
+        <div class="table-responsive" id="lists" style="display:none">
+            <table id="list" class="table table-striped shadow-lg mt-4" style="width:100%;">
+                <thead >
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Modificado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($categories as $category)
+                        <tr>
+                            <td width="5%"><img src="vendor/adminlte/dist/img/icons/folder{{ $category->contenido }}.png" width="95%" heigth="95%"></td>
+                            <form action="{{route('dashboard')}}" method="POST">
+                                @csrf
+                                <input type="hidden" value="{{$category->id}}" name="id_category">
+                                <input type="hidden" value="{{$category->name}}" name="name_category"> 
+                                <input type="hidden" value="0" name="nivel_folder">   
+                                <td><button style="background-color: Transparent; border: none; outline:none;" type="submit"><h5>{{ $category->name }}</h5></button></td>
+                            </form>
+                            <td><h6>{{date("F j, Y, g:i a", strtotime($category->created_at))}}</h6></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-
-<div class="table-responsive" id="lists" style="display:none">
-<table id="list" class="table table-striped table-bordered shadow-lg mt-4" style="width:100%;">
-    <thead class="bg-primary text-white">
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">Directorios</th>
-            <th scope="col">Fecha de modificación</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($categories as $category)
-            <tr>
-                 <td width="7%"><img src="vendor/adminlte/dist/img/icons/folder{{ $category->contenido }}.png" width="50%" heigth="50%"></td>
-                
-                <form action="{{route('dashboard')}}" method="POST">
-                    @csrf
-                    <input type="hidden" value="{{$category->id}}" name="id_category">
-                    <input type="hidden" value="{{$category->name}}" name="name_category"> 
-                    <input type="hidden" value="0" name="nivel_folder">   
-                    
-                    <td><button style="background-color: Transparent; border: none; outline:none;" type="submit">{{ $category->name }}</button></td>
-                </form>
-            
-                <td>{{ $category->created_at }}</td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
-</div>
-
-</div>
+    </div>
 </div>
 @stop
 
@@ -123,6 +108,11 @@
             "language": espanol
         });
     } );
+
+    function Directorios(id_category){
+        $('#category_id').val(id_category);
+        $('#form_directorios').submit();
+    }
 
     function List(){
         $('#icons').hide(500);

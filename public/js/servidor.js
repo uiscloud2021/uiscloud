@@ -1,3 +1,5 @@
+var file_delete;
+
 //TABLA PARA DESCARGAR ARCHIVO
 function DescargarFile(file_id){
     $.ajax({
@@ -26,20 +28,28 @@ function DescargarFile(file_id){
     });
 }
 
-function Seleccionar(){
-    $( "#seleccionar" ).hide();
-    $( "#comprimir" ).show();
-    //folder=$('#cont_folder').val();
-    icons=$('#cont_icons').val();
-    for(a=1; a<=icons; a++){
-        $( "#radioicons_details"+a ).hide();
-        $( "#chk_icons"+a ).show();
+
+
+//BOTONES SELECCIONADOS
+$('input[type=checkbox]').on('change', function() {
+    total = $('input[type=checkbox]:checked').length;
+    if(total == 0){
+        $( "#downloadb" ).hide();
+        $( "#downloadone" ).hide();
+        $( "#editb" ).hide();
+        $( "#deleteb" ).hide();
+    }else if(total == 1){
+        $( "#downloadb" ).hide();
+        $( "#downloadone" ).show();
+        $( "#editb" ).show();
+        $( "#deleteb" ).show();
+    }else{
+        $( "#downloadb" ).show();
+        $( "#downloadone" ).hide();
+        $( "#editb" ).hide();
+        $( "#deleteb" ).hide();
     }
-    /*for(b=1; b<=folder; b++){
-        $( "#radiofolder_details"+b ).hide();
-        $( "#chk_folder"+b ).show();
-    }*/
-}
+});
 
 function Comprimir(){
     var id = [];
@@ -48,12 +58,8 @@ function Comprimir(){
     });
     if(id.length > 0){
         toastr.warning('Los archivos están siendo procesados para descarga', 'Descargar', {timeOut:3000});
-        $( "#seleccionar" ).show();
-        $( "#comprimir" ).hide();
         icons=$('#cont_icons').val();
         for(a=1; a<=icons; a++){
-            $( "#radioicons_details"+a ).show();
-            $( "#chk_icons"+a ).hide();
             $("#chk_icons"+a).prop('checked', false);
         }
         $.ajax({
@@ -73,65 +79,43 @@ function Comprimir(){
     }
 }
 
-//TABLA DE DETALLES DE ARCHIVO
-function Details(radio){
-    var details = $('#detail').DataTable({
-        dom: 'T<"clear">lfrtip',
-        "processing": true,
-        "serverSide": true,
-        destroy: true,
-        "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]],
-        "ajax":{
-            "url": "/dashboard/details",
-            "method": "POST",
-            "data": {
-                radio:radio,
-                _token:$('input[name="_token"]').val()
-            },
-            
-        },
-        "columns": [
-            {"data": 'name'},
-            {"data": 'details'},
-            {"data": 'version'},
-            {"data": 'user'},
-            {"data": 'date'},
-        ],
-        "language": espanol
+function EditB(){
+    var id = [];
+    $('input[type=checkbox]:checked').each(function() {
+      id.push($(this).val());
     });
-    $('#folderdetails').hide();
-    $('#details').show(100);
+    if(id.length == 1){
+        EditFile(id);
+    }else{
+        toastr.warning('Seleccionar solo un archivo', 'Editar', {timeOut:3000});
+    }
 }
 
-
-//TABLA DE DETALLES DE CARPETA
-function FolderDetails(radio){
-    var details_folder = $('#details_folder').DataTable({
-        dom: 'T<"clear">lfrtip',
-        "processing": true,
-        "serverSide": true,
-        destroy: true,
-        "lengthMenu": [[5, 10, 50, -1], [5, 10, 50, "Todos"]],
-        "ajax":{
-            "url": "/dashboard/folderdetails",
-            "method": "POST",
-            "data": {
-                radio:radio,
-                _token:$('input[name="_token"]').val()
-            },
-            
-        },
-        "columns": [
-            {"data": 'name'},
-            {"data": 'date'},
-            {"data": 'edit'},
-        ],
-        "language": espanol
+function DeleteB(){
+    var id = [];
+    $('input[type=checkbox]:checked').each(function() {
+      id.push($(this).val());
     });
-    $('#details').hide();
-    $('#folderdetails').show(100);
+    if(id.length == 1){
+        file_delete = id;
+        $('#confirmModal').modal('show');
+    }else{
+        toastr.warning('Seleccionar solo un archivo', 'Eliminar', {timeOut:3000});
+    }
 }
 
+function DownloadB(){
+    var id = [];
+    $('input[type=checkbox]:checked').each(function() {
+      id.push($(this).val());
+    });
+    if(id.length == 1){
+        DescargarFile(id);
+    }else{
+        toastr.warning('Seleccionar solo un archivo', 'Descargar', {timeOut:3000});
+    }
+}
+//FIN DE BOTONES SELECCIONADOS
 
 function Datatable_list(){
     id_category=$('#id_category').val();
@@ -155,8 +139,8 @@ function Datatable_list(){
             
         },
         "columns": [
+            {"data": 'img'},
             {"data": 'file_name'},
-            {"data": 'type'},
             {"data": 'version'},
             {"data": 'date'},
             {"data": 'edit'},
@@ -170,8 +154,6 @@ function Datatable_list(){
 function List(){
     $('#icons').hide(500);
     $('#lists').show(1500);
-    $('#details').hide();
-    $('#folderdetails').hide();
     $("#view").removeClass("fas fa-table");
     $("#view").addClass("fas fa-list");
     Datatable_list();
@@ -180,13 +162,10 @@ function List(){
 function Icon(){
     $('#lists').hide(500);
     $('#icons').show(1500);
-    $('#details').hide();
-    $('#folderdetails').hide();
     $("#view").removeClass("fas fa-list");
     $("#view").addClass("fas fa-table");
 }
 
-var file_delete;
 $(document).on('click', '.delete', function(event){
     event.preventDefault();
     file_delete = $(this).attr('id');
@@ -272,11 +251,12 @@ $('#formedit_files').on('submit', function(e) {
             processData: false,
             beforeSend:function(){
                 $('#btnEditFile').hide();
+                $('#editFileModal').modal('hide');
+                $('#overlay').show();
             },
             success:function(resp){
                 if(resp == "actualizado"){
                     setTimeout(function(){
-                    $('#editFileModal').modal('hide');
                     toastr.success('El archivo fue modificado correctamente', 'Actualizar archivo', {timeOut:3000});
                     location.reload();
                     });
@@ -325,11 +305,12 @@ $('#formcreate_files').on('submit', function(e) {
             processData: false,
             beforeSend:function(){
                 $('#btnSubirFile').hide();
+                $('#createFileModal').modal('hide');
+                $('#overlay').show();
             },
             success:function(resp){
                 if(resp == "guardado"){
                     setTimeout(function(){
-                    $('#createFileModal').modal('hide');
                     toastr.success('El archivo fue subido correctamente', 'Subir archivo', {timeOut:3000});
                     location.reload();
                     });
@@ -357,16 +338,16 @@ $('#formcreate_zip').on('submit', function(e) {
             processData: false,
             beforeSend:function(){
                 $('#btnSubirZIP').hide();
+                $('#createZIPModal').modal('hide');
+                $('#overlay').show();
             },
             success:function(resp){
-                alert(resp);
-                /*if(resp == "guardado"){
+                if(resp == "guardado"){
                     setTimeout(function(){
-                    $('#createZIPModal').modal('hide');
                     toastr.success('Los archivos fueron subidos correctamente', 'Subir archivos', {timeOut:3000});
                     location.reload();
                     });
-                }*/
+                }
             }
         });
     }else{
@@ -408,11 +389,12 @@ $('#formcreate_folder').on('submit', function(e) {
             processData: false,
             beforeSend:function(){
                 $('#btnSubirFolder').hide();
+                $('#createFolderModal').modal('hide');
+                $('#overlay').show();
             },
             success:function(resp){
                 if(resp == "guardado"){
                     setTimeout(function(){
-                    $('#createFolderModal').modal('hide');
                     toastr.success('La carpeta fue creada correctamente', 'Crear carpeta', {timeOut:3000});
                     location.reload();
                     });
@@ -469,11 +451,12 @@ $('#formedit_folder').on('submit', function(e) {
             processData: false,
             beforeSend:function(){
                 $('#btnEditFolder').hide();
+                $('#editFolderModal').modal('hide');
+                $('#overlay').show();
             },
             success:function(resp){
                 if(resp == "actualizado"){
                     setTimeout(function(){
-                    $('#editFolderModal').modal('hide');
                     toastr.success('La carpeta fue modificada correctamente', 'Actualizar carpeta', {timeOut:3000});
                     location.reload();
                     });
