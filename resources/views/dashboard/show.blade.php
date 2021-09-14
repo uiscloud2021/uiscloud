@@ -9,7 +9,7 @@
             <ol class="breadcrumb float-sm-left">
               <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a href="/dashboard"> Servidor UIS</a></li>
               <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a> {{$category_name}}</a></li>
-              
+
               @if($url_folder != "")
                 <?php
                 $a=0;
@@ -19,7 +19,7 @@
                     <?php
                     $a++;
                     ?> 
-                    <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a> {{$url_cat[$a]}}</a></li>
+                    <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a> {{$url_cat[$a]}}</a></li>   
                 @endfor
               @else
                 <?php

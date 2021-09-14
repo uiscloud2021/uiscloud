@@ -1,5 +1,9 @@
 var file_delete;
 
+function Directorios(){
+    $('#form_directorios').submit();
+}
+
 //TABLA PARA DESCARGAR ARCHIVO
 function DescargarFile(file_id){
     $.ajax({

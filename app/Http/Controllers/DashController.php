@@ -20,6 +20,7 @@ class DashController extends Controller
 {
     //CONSTRUCTOR PARA PROTEGER FILES SOLO PARA LOGEADOS
     public function __construct(){
+        $this->middleware('auth');
         $this->middleware('can:dashboard');
     }
 
