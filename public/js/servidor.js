@@ -1,6 +1,6 @@
 var file_delete;
 
-function Directorios(){
+function Directorios(id_folder){
     $('#idppal_folder').val(id_folder);
     $('#id_folder').val(id_folder);
     nivel=$('#nivel_folder').val();

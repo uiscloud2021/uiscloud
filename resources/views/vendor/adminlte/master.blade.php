@@ -73,9 +73,9 @@
 
 </head>
 
-<body class="@yield('classes_body')" @yield('body_data') >
+<body class="@yield('classes_body')" @yield('body_data') oncontextmenu='return false'>
 
-    {{-- Body Content oncontextmenu='return false'--}}
+    {{-- Body Content --}}
     @yield('body')
 
     {{-- Base Scripts --}}
