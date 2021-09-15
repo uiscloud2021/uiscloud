@@ -5,12 +5,12 @@
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <ol class="breadcrumb float-sm-left">
-              <li class="breadcrumb-item active" style="font-size:16px; font-weight:bold;"><a> Servidor UIS</a></li>
+              <li class="breadcrumb-item active" style="font-size:14px; font-weight:bold;"><a> Servidor UIS</a></li>
             </ol>
         </div><!-- /.col -->
-        <div class="col-sm-6"></div><!-- /.col -->
+        <!--<div class="col-sm-6"></div> /.col -->
     </div><!-- /.row -->
 </div>
 @stop
@@ -49,11 +49,13 @@
                         ?>
 
                         <div class="col-md-3" style="padding: 1em; text-align:center;">
+                            <div class="directory">
                             <button onclick="Directorios('{{$category->id}}');" style="background-color: Transparent; border: none; outline:none;" type="button">
                             <img width="80%" heigth="80%" src="vendor/adminlte/dist/img/icons/folder{{$icono}}.png" >
                             </button><br/>
                             <h5>{{$category->name}}</h5>
                             <h6>{{date("d-M-y", strtotime($category->created_at))}}</h6>
+                            </div>
                         </div>
                     @endforeach
                 </div>

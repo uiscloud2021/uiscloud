@@ -5,10 +5,10 @@
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <ol class="breadcrumb float-sm-left">
-              <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a href="/dashboard"> Servidor UIS</a></li>
-              <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a> {{$category_name}}</a></li>
+              <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a href="/dashboard"> Servidor UIS</a></li>
+              <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios('{{$folder_id}}');"> {{$category_name}}</a></li>
 
               @if($url_folder != "")
                 <?php
@@ -19,18 +19,18 @@
                     <?php
                     $a++;
                     ?> 
-                    <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a> {{$url_cat[$a]}}</a></li>   
+                    <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios('{{$folder_id}}');"> {{$url_cat[$a]}}</a></li>   
                 @endfor
               @else
                 <?php
                 $url_cat="";
                 ?>
-                <li class="breadcrumb-item" style="font-size:16px; font-weight:bold;"><a> {{$url_folder}}</a></li>
+                <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios('{{$folder_id}}');"> {{$url_folder}}</a></li>
               @endif
 
             </ol>
         </div><!-- /.col -->
-        <div class="col-sm-6"></div><!-- /.col -->
+        <!--<div class="col-sm-6"></div> /.col -->
     </div><!-- /.row -->
 </div>
 @stop
@@ -112,6 +112,7 @@
                         ?>
 
                         <div class="col-md-3" style="padding: 1em; text-align:center;">
+                            <div class="directory">
                             <button onclick="DashSubmit('{{$folder->id}}');" style="background-color: Transparent; border: none; outline:none;" type="button">
                                 <img width="80%" height="80%" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png">
                             </button>
@@ -119,6 +120,7 @@
                             <br/>
                             <h5>{{$folder->name}}</h5>
                             <h6>{{date("d-M-y", strtotime($folder->created_at))}}</h6>
+                            </div>
                         </div>
                     @endforeach
                     </div>
@@ -133,6 +135,7 @@
                         ?>
 
                         <div class="col-md-3" style="padding: 1em; text-align:center;">
+                            <div class="directory">
                             <a href="#" onclick="DescargarFile({{ $file->id }});">
                                 <img src="vendor/adminlte/dist/img/icons/{{$icono}}.png" width="30%" heigth="30%">
                             </a>
@@ -140,6 +143,7 @@
                             <br/>
                             <h5 style="padding-top:7px;">{{$file->name}}.{{$file->type}}</h5>
                             <h6>{{date("d-M-y", strtotime($file->created_at))}}</h6>
+                            </div>
                         </div>
                     @endforeach
                     </div>

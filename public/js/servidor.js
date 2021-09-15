@@ -1,7 +1,12 @@
 var file_delete;
 
 function Directorios(){
-    $('#form_directorios').submit();
+    $('#idppal_folder').val(id_folder);
+    $('#id_folder').val(id_folder);
+    nivel=$('#nivel_folder').val();
+    nivel=nivel-2;
+    $('#nivel_folder').val(nivel);
+    $('#form_details').submit();
 }
 
 //TABLA PARA DESCARGAR ARCHIVO
