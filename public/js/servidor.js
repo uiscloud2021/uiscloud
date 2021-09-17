@@ -1,10 +1,8 @@
 var file_delete;
 
-function Directorios(id_folder){
-    $('#idppal_folder').val(id_folder);
-    $('#id_folder').val(id_folder);
-    nivel=$('#nivel_folder').val();
-    nivel=nivel-2;
+function Directorios(nivel){
+    $('#id_folder').val("");
+    nivel=nivel-1;
     $('#nivel_folder').val(nivel);
     $('#form_details').submit();
 }
