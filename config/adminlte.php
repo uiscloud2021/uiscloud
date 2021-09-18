@@ -145,7 +145,7 @@ return [
     */
 
     'sidebar_mini' => true, //ocultar totalmente el sidebar
-    'sidebar_collapse' => false, //cambiar si el sidebar estara por defecto cerrado o abierto
+    'sidebar_collapse' => true, //cambiar si el sidebar estara por defecto cerrado o abierto
     'sidebar_collapse_auto_size' => false,
     'sidebar_collapse_remember' => false,
     'sidebar_collapse_remember_no_transition' => true,

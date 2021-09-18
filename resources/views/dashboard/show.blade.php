@@ -115,6 +115,7 @@
                             <div class="directory">
                             <button onclick="DashSubmit('{{$folder->id}}');" style="background-color: Transparent; border: none; outline:none;" type="button">
                                 <img width="80%" height="80%" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png">
+                                <!--<div style="position: absolute; top: 46%; left: 55%;"><h6>10</h6></div>-->
                             </button>
                             <input style="vertical-align: top; height: 1em; width:17px; display:none;" type="checkbox" name="chk_folder{{$cont1}}" id="chk_folder{{$cont1}}" value="{{ $folder->id }}"/>
                             <br/>
