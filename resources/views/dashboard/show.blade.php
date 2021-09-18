@@ -114,7 +114,7 @@
                         <div class="col-md-3" style="padding: 1em; text-align:center;">
                             <div class="directory">
                             <button onclick="DashSubmit('{{$folder->id}}');" style="background-color: Transparent; border: none; outline:none;" type="button">
-                                <img width="80%" height="80%" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png">
+                                <img class="img_folder" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png">
                                 <!--<div style="position: absolute; top: 46%; left: 55%;"><h6>10</h6></div>-->
                             </button>
                             <input style="vertical-align: top; height: 1em; width:17px; display:none;" type="checkbox" name="chk_folder{{$cont1}}" id="chk_folder{{$cont1}}" value="{{ $folder->id }}"/>
@@ -138,7 +138,7 @@
                         <div class="col-md-3" style="padding: 1em; text-align:center;">
                             <div class="directory">
                             <a href="#" onclick="DescargarFile({{ $file->id }});">
-                                <img src="vendor/adminlte/dist/img/icons/{{$icono}}.png" width="30%" heigth="30%">
+                                <img class="img_file" src="vendor/adminlte/dist/img/icons/{{$icono}}.png" >
                             </a>
                             <input style="vertical-align: top; height: 1em; width:17px;" type="checkbox" name="chk_icons{{$cont}}" id="chk_icons{{$cont}}" value="{{ $file->id }}"/>
                             <br/>

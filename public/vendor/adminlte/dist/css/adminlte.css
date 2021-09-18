@@ -529,6 +529,92 @@ mark,
   -webkit-border-radius: 20px; 
 }
 
+.img_folder{
+  width: 80%;
+  height: 80%;
+}
+
+.img_file{
+  width: 30%;
+  height: 30%;
+}
+
+@media (max-width:320px) {
+  .img_folder{
+    width: 40%;
+    height: 40%;
+  }
+  
+  .img_file{
+    width: 15%;
+    height: 15%;
+  }
+}
+
+@media (min-width:400px) {
+  .img_folder{
+    width: 48%;
+    height: 48%;
+  }
+  
+  .img_file{
+    width: 18%;
+    height: 18%;
+  }
+}
+
+@media (min-width:570px) {
+  .img_folder{
+    width: 50%;
+    height: 50%;
+  }
+  
+  .img_file{
+    width: 15%;
+    height: 15%;
+  }
+}
+
+@media (min-width:768px) {
+  .img_folder{
+    width: 72%;
+    height: 72%;
+  }
+  
+  .img_file{
+    width: 43%;
+    height: 43%;
+  }
+}
+
+@media (min-width:1024px) {
+  .img_folder{
+    width: 78%;
+    height: 78%;
+  }
+  
+  .img_file{
+    width: 38%;
+    height: 38%;
+  }
+}
+
+@media (min-width:1200px) {
+  .img_folder{
+    width: 79%;
+    height: 79%;
+  }
+  
+  .img_file{
+    width: 28%;
+    height: 28%;
+  }
+}
+
+
+
+
+
 code {
   font-size: 87.5%;
   color: #e83e8c;
