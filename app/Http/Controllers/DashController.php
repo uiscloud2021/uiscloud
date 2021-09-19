@@ -49,7 +49,7 @@ class DashController extends Controller
     {
         $current_user = auth()->id();
         $category_id = $request->id_category;
-        $nivel = $request->nivel_folder;
+        $nivel = (int)$request->nivel_folder;
         $nivel_id = $nivel + 1;
         $url_folder="";
         $folder_id = 0;
