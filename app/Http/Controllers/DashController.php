@@ -77,11 +77,13 @@ class DashController extends Controller
 
         }else{
             $folder_id = $request->id_folder;
+            $name_fold = $request->name_fold;
 
             if($folder_id==""){
-                $cons_fold = Folder::where('nivel', '=', $nivel_id)
+                $cons_fold = Folder::where('name', '=', $name_fold)
                 ->where('category_id', '=', $category_id)->get()->first();
-                $folder_id = $cons_fold->folder_id;
+                //$folder_id = $cons_fold->folder_id;
+                $folder_id = $cons_fold->id;
             }
 
             $fold = Folder::where('id', '=', $folder_id)->get()->first();

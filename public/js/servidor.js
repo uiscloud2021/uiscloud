@@ -1,9 +1,13 @@
 var file_delete;
 
-function Directorios(nivel){
+function Directorios(datos){
+    var fold = datos.split(",");
+    folder_name=fold[0];
+    nivel=fold[1];
     $('#id_folder').val("");
-    nivel=nivel-1;
+    nivel=parseInt(nivel)-1;
     $('#nivel_folder').val(nivel);
+    $('#name_fold').val(folder_name);
     $('#form_details').submit();
 }
 

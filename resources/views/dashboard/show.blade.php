@@ -8,7 +8,7 @@
         <div class="col-sm-12">
             <ol class="breadcrumb float-sm-left">
               <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a href="/dashboard"> Servidor UIS</a></li>
-              <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios(1);"> {{$category_name}}</a></li>
+              <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios('{{$category_name}},1');"> {{$category_name}}</a></li>
 
               @if($url_folder != "")
                 <?php
@@ -19,7 +19,7 @@
                     <?php
                     $a++;
                     ?> 
-                    <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios({{$i}});"> {{$url_cat[$a]}}</a></li> 
+                    <li class="breadcrumb-item" style="font-size:14px; font-weight:bold;"><a style="cursor:pointer" onclick="Directorios('{{$url_cat[$a]}},{{$i}}');"> {{$url_cat[$a]}}</a></li> 
                 @endfor
               @else
                 <?php
@@ -102,7 +102,8 @@
                 <input type="hidden" value="{{$category_name}}" name="name_category">
                 <input type="hidden" value="{{$nivel_id}}" name="nivel_folder" id="nivel_folder">
                 <input type="hidden" value="{{$folder_id}}" name="id_folder" id="id_folder">
-                <input type="hidden" name="url_folder" id="url_folder"> 
+                <input type="hidden" name="url_folder" id="url_folder">
+                <input type="hidden" name="name_fold" id="name_fold">
 
                 <div id="icon">
                     <div class="row">
