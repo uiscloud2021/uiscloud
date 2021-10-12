@@ -66,6 +66,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'dashboard.edit_folder', 'description' => 'Cargar edición de carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
         Permission::create(['name' => 'dashboard.update_folder', 'description' => 'Editar carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
         Permission::create(['name' => 'dashboard.delete_folder', 'description' => 'Eliminar carpeta Servidor UIS'])->syncRoles([$role1, $role2]);
+        Permission::create(['name' => 'dashboard.notification', 'description' => 'Notificaciones'])->syncRoles([$role1, $role2]);
 
     }
 }

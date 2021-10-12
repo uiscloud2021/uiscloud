@@ -25,6 +25,7 @@ function DescargarFile(file_id){
         {
             if(resp.success == "disponible"){
                 window.open(resp.url, "_blank");
+                location.reload();
             }else if(resp.success == "bloqueadoedit"){
                 setTimeout(function(){
                     toastr.warning('Subir el archivo actualizado o desbloquear el archivo', 'Archivo en uso', {timeOut:3000});

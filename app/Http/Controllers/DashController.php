@@ -917,6 +917,40 @@ class DashController extends Controller
     }
 
     
+
+
+    public function redirectToGoogleProvider(Google $googleDoc)
+    {
+        $client = $googleDoc->client();
+        $auth_url = $client->createAuthUrl();
+        return redirect($auth_url);
+
+    }
+
+    public function handleProviderGoogleCallback(Request $request)
+    {
+
+        if($request->has('code')){
+
+            $client = $this->client;
+            $client->authenticate($request->input('code'));
+            $token = $client->getAccessToken();
+            $request->session()->put('access_token',$token);
+
+
+            return redirect('/home')->with('success','post saves successfully');
+
+        }
+        else{
+
+            $client=$this->client;
+            $auth_url = $client->createAuthUrl();
+            return redirect($auth_url);
+        }
+
+    }
+
+    
 }
 
 
