@@ -252,6 +252,7 @@ class DashController extends Controller
             $time=Carbon::now();
             $current_user = auth()->id();
             $id_file = $request->id;
+            $block=$request->block_editf;
 
             //CARGAR LOS DATOS DEL ARCHIVO
             $files_prev = File::where('id', '=', $id_file)->get()->first();
@@ -262,6 +263,8 @@ class DashController extends Controller
             $version_ant = $files_prev->version;
             $id_folder_prev = $files_prev->id_folder;
             $url_file_prev = $files_prev->url;
+
+            $archivoConvert = strtr($archivo_prev, ":", "_");
 
             //CONSULTA PARA CATEGORIA
             $name_category_prev = Category::where('id', '=', $category_prev)->get()->first();
@@ -277,6 +280,16 @@ class DashController extends Controller
             $user_modify = $name_user->name;
 
             $archivo_new = $request->file('archivo_editf');
+
+            if($archivo_new!=""){
+                //get filename with extension
+                $filenamewithextension = $request->file('archivo_editf')->getClientOriginalName();
+
+                if($archivoConvert!=$filenamewithextension){
+                    return response("desigual");
+                }
+            }
+
             //GUARDAR SI EL ARCHIVO ES MODIFICADO
             if($archivo_new!=""){
                 //NOMBRE NUEVO DE ARCHIVO
@@ -305,13 +318,9 @@ class DashController extends Controller
 
             //GUARDAR CAMBIOS
             $files = File::find($id_file);
-            $files -> name = $request->name_editf;
             $version = $version_ant + 1;
             
             if($archivo_new!=""){
-                //get filename with extension
-                $filenamewithextension = $request->file('archivo_editf')->getClientOriginalName();
-         
                 //get filename without extension
                 $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
          
@@ -338,13 +347,16 @@ class DashController extends Controller
                     $versionamiento="Si";
                 }
                 $files -> versionamiento = $versionamiento;
+                $files -> bloqueado = '0';
+                $files -> user_block = "";
+            }else{
+                $files -> name = $request->name_editf;
+                $files -> bloqueado = $block;
             }
-
-            $block=$request->block_editf;
 
             $files -> id_user = $current_user;
             $files -> category_id = $category_prev;
-            $files -> bloqueado = $block;
+            
             if($block==0){
                 $files -> user_block = "";
             }
@@ -352,6 +364,7 @@ class DashController extends Controller
             $files -> save();
 
             return response("actualizado");
+            
          }
     }
 
@@ -496,11 +509,10 @@ class DashController extends Controller
             $user_name = $users->name;
             
             if($block == 0){
-                $fil = File::find($file_id);
-                $fil -> bloqueado = '1';
-                $fil -> user_block = $user_name;
-                $fil -> save();
-
+                $file = File::find($file_id);
+                $file -> bloqueado = '1';
+                $file -> user_block = $user_name;
+                $file -> save();
                 return response()->json(['success'=>'disponible', 'url'=>$url]);
             }else if($user_name==$user){
                 return response()->json(['success'=>'bloqueadoedit', 'id'=>$file_id]);
@@ -811,7 +823,6 @@ class DashController extends Controller
             $public_dir=public_path();
         	// Zip File Name
             $zipFileName = 'CreateZIP'.time().'.zip';
-
             if ($zip->open($public_dir.'/'.$zipFileName, ZipArchive::CREATE) === TRUE) {    
                 // Add Multiple file 
                 foreach($filezip as $fzip) {
@@ -832,10 +843,8 @@ class DashController extends Controller
                 $url = Storage::disk('s3')->url("ZIP/".$zipFileName);
             }*/
             /*
-
             $nombresFichZIP = array();
             $zip2 = new ZipArchive;
-
             if ($zip2->open($ziptopath) === TRUE){
                 for($i = 0; $i < $zip2->numFiles; $i++){
 	                //obtenemos nombre del fichero con extension
@@ -844,9 +853,7 @@ class DashController extends Controller
                     $filename[$i] = pathinfo($nombresFichZIP['name'][$i], PATHINFO_FILENAME);
                     //get file extension
                     $extension[$i] = pathinfo($nombresFichZIP['name'][$i], PATHINFO_EXTENSION);
-
                     $filenameoriginal[$i] = $filename[$i].'_'.$time.'.'.$extension[$i];
-
                     if($id_folder != 0){
                         $cons_folder = Folder::where('id', '=', $id_folder)->get()->first();
                         $url_folder = $cons_folder->url;
@@ -859,7 +866,6 @@ class DashController extends Controller
                         $filenametostore[$i] = $folder."/".$filenameoriginal[$i];
                         Storage::disk('s3')->put($filenametostore[$i], 'public');
                     }
-
                     $version[$i]="1";
                     //VERIFICAR VERSIONAMIENTO
                     if($extension[$i] == "doc" || $extension[$i] == "docx" || $extension[$i] == "xls" || $extension[$i] == "xlsx" || $extension[$i] == "vsd" || $extension[$i] == "ppt" || $extension[$i] == "pptx"){
@@ -867,7 +873,6 @@ class DashController extends Controller
                     }else{
                         $versionamiento[$i]="Si";
                     }
-
                     //GUARDAR REGISTROS
                     $files[$i] = new File();
                     $files[$i] -> name = $filename[$i];
@@ -885,7 +890,6 @@ class DashController extends Controller
                     $files[$i] -> nivel = $nivel;
                     //GUARDAR
                     $files[$i] -> save();
-
                     //GUARDAR LA RELACION DE LOS USUARIOS PARA EL ARCHIVO
                     $users[$i] = User::whereHas('categories', function($query) use($category_id){
                         $query->where('category_id', '=', $category_id);
@@ -904,7 +908,6 @@ class DashController extends Controller
             $categ = Category::find($category_id);
             $categ -> contenido = '1';
             $categ -> save();
-
             if($id_folder != 0){
                 //GUARDAR CONTENIDO EN FOLDER (CARPETA LLENA O VACIA)
                 $fold = Folder::find($id_folder);
@@ -952,5 +955,3 @@ class DashController extends Controller
 
     
 }
-
-

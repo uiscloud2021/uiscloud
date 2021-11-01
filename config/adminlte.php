@@ -293,6 +293,14 @@ return [
             
         ],
         [
+            'text' => 'Archivos descargados',
+            'url'  => 'downloads',
+            'icon' => 'fas fa-fw fa-file',
+            'active' => ['downloads*'],
+            'can'  => 'logs.index',
+            
+        ],
+        [
             'text' => 'Archivos modificados',
             'url'  => 'logs',
             'icon' => 'fas fa-fw fa-file',

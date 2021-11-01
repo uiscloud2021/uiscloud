@@ -22,7 +22,7 @@ function DescargarFile(file_id){
             _token:$('input[name="_token"]').val()
         },
         success: function (resp)
-        {
+        { 
             if(resp.success == "disponible"){
                 window.open(resp.url, "_blank");
                 location.reload();
@@ -47,17 +47,17 @@ $('input[type=checkbox]').on('change', function() {
     total = $('input[type=checkbox]:checked').length;
     if(total == 0){
         $( "#downloadb" ).hide();
-        $( "#downloadone" ).hide();
+        //$( "#downloadone" ).hide();
         $( "#editb" ).hide();
         $( "#deleteb" ).hide();
     }else if(total == 1){
         $( "#downloadb" ).hide();
-        $( "#downloadone" ).show();
+        //$( "#downloadone" ).show();
         $( "#editb" ).show();
         $( "#deleteb" ).show();
     }else{
         $( "#downloadb" ).show();
-        $( "#downloadone" ).hide();
+        //$( "#downloadone" ).hide();
         $( "#editb" ).hide();
         $( "#deleteb" ).hide();
     }
@@ -96,6 +96,8 @@ function EditB(){
     $('input[type=checkbox]:checked').each(function() {
       id.push($(this).val());
     });
+    document.getElementById("div_size").style.display="none";
+    document.getElementById("div_extension").style.display="none";
     if(id.length == 1){
         EditFile(id);
     }else{
@@ -232,6 +234,9 @@ function EditFile(id){
                 if(this.bloqueado == '0'){
                     document.getElementById("div_bloqueado").style.display="none";
                     $('#editfile_block').attr("disabled", true);
+                    document.getElementById("div_archivo").style.display="none";
+                    $('#editfile_name').attr("disabled", false);
+                    document.getElementById("div_details").style.display="none";
                 }else{
                     document.getElementById("div_bloqueado").style.display="";
                     if($('#editfile_user_name').val() == this.user_block){
@@ -240,6 +245,11 @@ function EditFile(id){
                         $('#editfile_block').attr("disabled", true);
                         document.getElementById("btnEditFile").style.display="none";
                     }
+                    document.getElementById("div_archivo").style.display="";
+                    document.getElementById("div_size").style.display="none";
+                    document.getElementById("div_extension").style.display="none";
+                    $('#editfile_name').attr("disabled", true);
+                    document.getElementById("div_details").style.display="";
                 }
             });
             $('#editFileModal').modal('toggle');
@@ -271,6 +281,12 @@ $('#formedit_files').on('submit', function(e) {
                     setTimeout(function(){
                     toastr.success('El archivo fue modificado correctamente', 'Actualizar archivo', {timeOut:3000});
                     location.reload();
+                    });
+                } else if(resp == "desigual"){
+                    setTimeout(function(){
+                    toastr.warning('El archivo no corresponde al que se descargo', 'Actualizar archivo', {timeOut:3000});
+                    $('#overlay').hide();
+                    //location.reload();
                     });
                 }
             }

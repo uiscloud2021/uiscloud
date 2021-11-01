@@ -52,7 +52,7 @@
     
         <div class="card-tools" >
             <a style="font-size:15px; display:none;" href="#" id="downloadb" onclick="Comprimir();"><i class="fas fa-download"> Descargar zip</i></a>
-            <a style="font-size:15px; display:none;" href="#" id="downloadone" onclick="DownloadB();"><i class="fas fa-download"> Descargar</i></a>
+            <!--<a style="font-size:15px; display:none;" href="#" id="downloadone" onclick="DownloadB();"><i class="fas fa-download"> Descargar</i></a>-->
             <a style="padding-left: 15px; font-size:15px; display:none;" id="editb" href="#" onclick="EditB();"><i class="fas fa-pencil-alt"> Editar</i></a>
             <a style="padding-left: 15px; font-size:15px; display:none;" id="deleteb" href="#" onclick="DeleteB();"><i class="fas fa-trash"> Eliminar</i></a>
             <div class="btn-group">
@@ -118,7 +118,7 @@
                                 <img width="80%" height="80%" src="vendor/adminlte/dist/img/icons/folder{{$folder->contenido}}.png">
                                 <!--<div style="position: absolute; top: 46%; left: 55%;"><h6>10</h6></div>-->
                             </button>
-                            <input style="vertical-align: top; height: 1em; width:17px; display:none;" type="checkbox" name="chk_folder{{$cont1}}" id="chk_folder{{$cont1}}" value="{{ $folder->id }}"/>
+                            <!--<input style="vertical-align: top; height: 1em; width:17px; display:none;" type="checkbox" name="chk_folder{{$cont1}}" id="chk_folder{{$cont1}}" value="{{ $folder->id }}"/>-->
                             <br/>
                             <h5>{{$folder->name}}</h5>
                             <h6>{{date("d-M-y", strtotime($folder->created_at))}}</h6>

@@ -56,7 +56,7 @@
       </div>
       {!! Form::open(['method' => 'POST', 'enctype' => 'multipart/form-data', 'id'=>'formedit_files', 'files' => true]) !!}
       <div class="modal-body">
-        <div class="form-group">
+        <div class="form-group" id="div_name">
         <?php
         $user=auth()->user()->name;
         ?>
@@ -67,17 +67,17 @@
             {!! Form::text('name_editf', null, ['class' => 'form-control', 'id'=>'editfile_name', 'placeholder' => 'Ingrese el nombre del archivo']) !!}
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_archivo">
             {!! Form::label('archivo_editf', 'Nuevo archivo', ['class' => 'form-label']) !!}
             {!! Form::file('archivo_editf', ['class' => 'form-control-file', 'id'=>'editfile_file', 'enctype' => 'multipart/form-data']) !!}
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_size">
             {!! Form::label('size_editf', 'Tamaño del archivo actual', ['class' => 'form-label']) !!}
             {!! Form::text('size_editf', null, ['class' => 'form-control', 'id'=>'editfile_size', 'placeholder' => 'Ingrese el tamaño del archivo', 'readonly']) !!}
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_extension">
             {!! Form::label('type_editf', 'Extensión del archivo actual', ['class' => 'form-label']) !!}
             {!! Form::text('type_editf', null, ['class' => 'form-control', 'id'=>'editfile_type', 'placeholder' => 'Ingrese el tipo de archivo', 'readonly']) !!}
         </div>
@@ -88,7 +88,7 @@
             <br/>Bloqueado por: {!! Form::text('userblock_editf', null, ['class' => 'form-control', 'id'=>'editfile_userblock', 'readonly']) !!}
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_details">
             {!! Form::label('details_editf', 'Descripción (Solo si se sube un nuevo archivo)', ['class' => 'form-label']) !!}
             {!! Form::textarea('details_editf', null, ['class' => 'form-control', 'id'=>'editfile_details', 'placeholder' => 'Descripción o detalles del cambio']) !!}
         </div>

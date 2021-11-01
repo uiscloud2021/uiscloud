@@ -12,6 +12,7 @@ use App\Http\Controllers\DashController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,8 @@ Route::resource('profile', ProfileController::class);
 
 Route::resource('notification', NotificationController::class);
 
+Route::resource('downloads', DownloadController::class);
+
 
 Route::post('/dashboard/list_files', 'App\Http\Controllers\DashController@list_files')->name('dashboard.list_files');
 Route::post('/dashboard/delete_files', 'App\Http\Controllers\DashController@delete_files')->name('dashboard.delete_files');
@@ -71,9 +74,6 @@ Route::post('/dashboard/delete_folder', 'App\Http\Controllers\DashController@del
 
 Route::get('/dashboard', 'App\Http\Controllers\DashController@index')->name('dashboard');
 
-Route::get('/login/google', 'App\Http\Controllers\DashController@redirectToGoogleProvider');
-Route::get('/login/google/callback', 'App\Http\Controllers\DashController@handleProviderGoogleCallback');
-Route::get('/post/blog', 'App\Http\Controllers\GoogleController@handlePost');
 
 /*Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
