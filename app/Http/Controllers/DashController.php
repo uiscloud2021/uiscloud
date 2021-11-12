@@ -36,6 +36,8 @@ class DashController extends Controller
         $current_user = auth()->user();
         $categories = $current_user->categories;
 
+        
+
         return view('dashboard', compact('categories'));
     }
 
@@ -123,7 +125,7 @@ class DashController extends Controller
      */
 
 
-    public function list_files(Request $request)
+    /*public function list_folders(Request $request)
     {
         $category_id=$request->id_category;
         $current_user = auth()->id();
@@ -136,19 +138,12 @@ class DashController extends Controller
         ->whereHas('users', function($query) use($current_user){
             $query->where('user_id', '=', $current_user);
         })->get();
-
-        $folders = Folder::where('nivel', '=', $nivel_id)
-        ->where('category_id', $category_id)
-        ->where('folder_id', $folder_id)
-        ->whereHas('users', function($query) use($current_user){
-            $query->where('user_id', '=', $current_user);
-        })->get();
         
         return datatables()->of($files)
         ->addColumn('img', function ($files) {
             $icono = strtolower($files->type);
-            $htm = '<a><img src="vendor/adminlte/dist/img/icons/'.$icono.'.png" style="text-align:center;" width="60%" heigth="60%"></a>';
-            return $htm;
+            $htm2 = '<a><img src="vendor/adminlte/dist/img/icons/'.$icono.'.png" style="text-align:center;" width="60%" heigth="60%"></a>';
+            return $htm2;
         })
         ->addColumn('file_name', function ($files) {
             $html = '<h5><a href="#" style="color:#000000;" onclick="DescargarFile('.$files->id.');">'.$files->name.'.'.$files->type.'</a></h5>';
@@ -172,8 +167,117 @@ class DashController extends Controller
             $html3 = '<button type="button" name="delete" id="'.$files->id.'" class="delete btn btn-danger btn-sm">Eliminar</button>';
             return $html3;
         })
-        ->rawColumns(['img', 'file_name', 'version', 'date', 'edit', 'delete'])
+        ->rawColumns(['img', 'file_name', 'date', 'edit', 'delete'])
         ->make(true);
+    }*/
+
+
+    public function list_files(Request $request)
+    {
+        $category_id=$request->id_category;
+        $current_user = auth()->id();
+        $folder_id=$request->id_folder;
+        $nivel_id=$request->nivel;
+
+        $items = [];
+
+        $files = File::where('category_id', $category_id)
+        ->where('nivel', $nivel_id)
+        ->where('id_folder', $folder_id)
+        ->whereHas('users', function($query) use($current_user){
+            $query->where('user_id', '=', $current_user);
+        })->get();
+
+        $folders = Folder::where('nivel', '=', $nivel_id)
+        ->where('category_id', $category_id)
+        ->where('folder_id', $folder_id)
+        ->whereHas('users', function($query) use($current_user){
+            $query->where('user_id', '=', $current_user);
+        })->get();
+
+        foreach($files as $file){
+            $item = [];
+            $item['id'] = $file->id;
+            $item['contenido'] = $file->type;
+            $item['name'] = $file->name;
+            $item['created_at'] = $file->updated_at;
+            $item['size'] = $file->size;
+            $item['type'] = "file";
+            array_push($items, $item);
+        }
+
+        foreach($folders as $folder){
+            $item = [];
+            $item['id'] = $folder->id;
+            $item['contenido'] = $folder->contenido;
+            $item['name'] = $folder->name;
+            $item['created_at'] = $folder->updated_at;
+            $item['size'] = $folder->url;
+            $item['type'] = "folder";
+            array_push($items, $item);
+        }
+
+        return datatables()->of($items)
+        ->addColumn('img', function ($items) {
+            if($items['type']=="folder"){
+                $htm = '<a style="cursor:pointer" onclick="DashSubmit('.$items['id'].');"><img src="vendor/adminlte/dist/img/icons/folder'.$items['contenido'].'.png" style="text-align:center;" width="70%" heigth="70%"></a>';
+            }else{
+                $icono = strtolower($items['contenido']);
+                $htm = '<a style="cursor:pointer" onclick="DescargarFile('.$items['id'].');"><img src="vendor/adminlte/dist/img/icons/'.$icono.'.png" style="text-align:center;" width="70%" heigth="70%"></a>';
+            }
+            return $htm;
+        })
+        ->addColumn('name', function ($items) {
+            if($items['type']=="folder"){
+                $html = '<h5><a href="#" style="color:#000000;" onclick="DashSubmit('.$items['id'].');">'.$items['name'].'</a></h5>';
+            }else{
+                $html = '<h5><a href="#" style="color:#000000;" onclick="DescargarFile('.$items['id'].');">'.$items['name'].'.'.$items['contenido'].'</a></h5>';
+            }
+            return $html;
+        })
+        ->addColumn('date', function ($items) {
+            $ht4 = $items['created_at']->__toString();
+            $html4 = date("F j, Y, g:i a", strtotime($ht4));
+            return '<h6>'.$html4.'</h6>';
+        })
+        ->addColumn('size', function ($items) {
+            if($items['type']=="folder"){
+                $directorio=$items['size'];
+                $sizeArray= array(); //Arreglo donde se almacenarán los archivos para posteriormente sumarlas
+                //Se obtienen todos los archivos   
+                $archivos_array = Storage::disk('s3')->allFiles($directorio); 
+                //Se calcula el peso de cada archivo con una iteración almacenándolo en el array
+                foreach ($archivos_array as $key => $file) {
+                    $sizeArray[$key]=Storage::disk('s3')->size($file);
+                }
+                //Se procene a crear una suma de todo el array, convertirla a megas y solo obtener los dos decimales
+                $html5=round((array_sum($sizeArray))/1048576, 2)." Mb";
+            }else{
+                $html5 = round(($items['size'])/1048576, 2)." Mb";
+            }
+            return '<h6>'.$html5.'</h6>';
+        })
+        ->addColumn('edit', function ($items) {
+            if($items['type']=="folder"){
+                $html2 = "";
+                //$html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFolder('.$items['id'].')">Editar</a>';
+            }else{
+                $html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFile('.$items['id'].')">Editar</a>';
+            }
+            return $html2;
+        })
+        ->addColumn('delete', function ($items) {
+            if($items['type']=="folder"){
+                $html3 = '';
+            }else{
+                $route="dashboard.delete_files,".$items['id'];
+                $html3 = '<button type="button" name="delete" id="'.$items['id'].'" class="delete btn btn-danger btn-sm">Eliminar</button>';
+            }
+            return $html3;
+        })
+        ->rawColumns(['img', 'name', 'date', 'size', 'edit', 'delete'])
+        ->make(true);
+        
     }
 
     
@@ -501,9 +605,23 @@ class DashController extends Controller
         $versionamiento = $files->versionamiento;
         $block = $files->bloqueado;
         $user = $files->user_block;
-        $url = $files->url;
+        //$url = $files->url;
         $name_origin=$files->filename;
+        $id_folder = $files->id_folder;
+        $id_category = $files->category_id;
 
+        if($id_folder==0){
+            $category =Category::where('id', '=', $id_category)->get()->first();
+            $path = $category->name;
+            $filenametostore = $path."/".$name_origin;
+            $url = Storage::disk('s3')->url($filenametostore);
+        }else{
+            $folder = Folder::where('id', '=', $id_folder)->get()->first();
+            $path = $folder->url;
+            $filenametostore = $path."/".$name_origin;
+            $url = Storage::disk('s3')->url($filenametostore);
+        }
+        
         if($versionamiento == "No"){
             $users = User::where('id', '=', $current_user)->get()->first();
             $user_name = $users->name;
@@ -523,7 +641,6 @@ class DashController extends Controller
         }else{
             return response()->json(['success'=>'disponible', 'url'=>$url]);
         }
-
     }
 
 
@@ -638,40 +755,47 @@ class DashController extends Controller
             $url_prev = $folder_prev->url;
             $contenido = $folder_prev->contenido;
             $dir_folder_id = $folder_prev->folder_id;
+            $name_prev = $folder_prev->name;
 
             $name_category = Category::where('id', '=', $category_id)->get()->first();
             $directory = $name_category->name;
 
             //LE PASO EL NOMBRE DE LA CARPETA
-            $folder_new = $request->name_editc;
+            $name_new = $request->name_editc;
 
-            
-            //CREAR CARPETA(directorio) EN S3
+            $directories = Storage::allDirectories($directory);
+            /*/CREAR CARPETA(directorio) EN S3
             if($contenido==0){
                 Storage::deleteDirectory($url_prev);
                 if($nivel==1){
-                    $url=$directory."/".$folder_new;
+                    $url=$directory."/".$name_new;
                     Storage::makeDirectory($url);
                 }else{
                     $dirfolder = Folder::where('id', '=', $dir_folder_id)->get()->first();
                     $url_dirfolder = $dirfolder->url;
-                    $url=$url_dirfolder."/".$folder_new;
+                    $url=$url_dirfolder."/".$name_new;
                     Storage::makeDirectory($url);
+                }
+                //CAMBIAMOS TODAS LAS URL CON EL NOMBRE DE LA NUEVA CARPETA
+                $cons_folder = Folder::where('url', 'like', "%$name_prev%")->get();
+                foreach($cons_folder as $folder){
+                    $url_new = str_replace($name_prev, $name_new, $folder->url);
+                    $cons_newfolder = Folder::find($folder->id);
+                    $cons_newfolder -> url = $url_new;
+                    $cons_newfolder -> id_user = $current_user;
+                    $cons_newfolder -> save();
                 }
                 //GUARDAR CAMBIOS
                 $folders = Folder::find($id_folder);
-                $folders -> name = $folder_new;
-                $folders -> url = $url;
+                $folders -> name = $name_new;
                 $folders -> id_user = $current_user;
-                //guarda
                 $folders -> save();
 
                 return response("actualizado");
             }else{
                 return response("noactualizado");
-            }
-
-            
+            }*/
+            return response($directories);
          }
     }
 

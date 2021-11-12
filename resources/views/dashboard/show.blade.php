@@ -70,7 +70,7 @@
 
             <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i id="view" class="fas fa-table"></i>
+                    <i id="view" class="fas fa-list"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(46px, 19px, 0px);">
                     <a href="#" class="dropdown-item" onclick="Icon();"><i class="fas fa-table"> Iconos</i></a>
@@ -90,7 +90,9 @@
             <i class="fas fa-3x fa-sync-alt fa-spin"></i>
             <div class="text-bold pt-2"> Subiendo...</div>
         </div>
-        <div  id="icons">
+
+
+        <div id="icons" style="display:none">
             <?php
             $cont1=0;
             $cont=0;
@@ -156,16 +158,16 @@
         </div>
 
 
-        <div class="table-responsive" id="lists" style="display:none">
+        <div class="table-responsive" id="lists" >
             <table id="list" class="table table-striped shadow-lg mt-4" style="width:100%;">
                 <thead>
                     <tr>
-                        <th scope="col" width="5%"></th>
+                        <th scope="col" width="7%"></th>
                         <th scope="col">Nombre</th>
-                        <th scope="col">Versión</th>
                         <th scope="col">Modificado</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
+                        <th scope="col">Tamaño</th>
+                        <th scope="col" width="4%"></th>
+                        <th scope="col" width="4%"></th>
                     </tr>
                 </thead>
             </table>
@@ -192,6 +194,6 @@
     <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-    <script src="{{ asset('js/servidor.js') }}"></script>
+    <script src="{{ asset('js/servidor.js?1') }}"></script>
 
 @stop

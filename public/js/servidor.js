@@ -1,3 +1,7 @@
+$(document).ready(function() {
+    List();
+} );
+
 var file_delete;
 
 function Directorios(datos){
@@ -23,6 +27,9 @@ function DescargarFile(file_id){
         },
         success: function (resp)
         { 
+            if(resp.success == "disponible"){
+                window.open(resp.url, "_blank");
+            }
             if(resp.success == "disponible"){
                 window.open(resp.url, "_blank");
                 location.reload();
@@ -154,9 +161,9 @@ function Datatable_list(){
         },
         "columns": [
             {"data": 'img'},
-            {"data": 'file_name'},
-            {"data": 'version'},
+            {"data": 'name'},
             {"data": 'date'},
+            {"data": 'size'},
             {"data": 'edit'},
             {"data": 'delete'},
         ],
@@ -483,14 +490,15 @@ $('#formedit_folder').on('submit', function(e) {
                 $('#overlay').show();
             },
             success:function(resp){
-                if(resp == "actualizado"){
+                alert(resp);
+                /*if(resp == "actualizado"){
                     setTimeout(function(){
                     toastr.success('La carpeta fue modificada correctamente', 'Actualizar carpeta', {timeOut:3000});
                     location.reload();
                     });
                 }else{
                     toastr.warning('La carpeta no puede ser modificada porque existen archivos en su contenido', 'Actualizar carpeta', {timeOut:3000});
-                }
+                }*/
             }
         });
     }else{

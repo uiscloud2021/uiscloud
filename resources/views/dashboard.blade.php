@@ -24,7 +24,7 @@
         <div class="card-tools">
             <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i id="view" class="fas fa-table"></i>
+                    <i id="view" class="fas fa-list"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(46px, 19px, 0px);">
                     <a href="#" class="dropdown-item" onclick="Icon();"><i class="fas fa-table"> Iconos</i></a>
@@ -37,7 +37,7 @@
 
     <div class="card-body">
 
-        <div id="icons">
+        <div id="icons" style="display:none">
             <form action="{{route('dashboard')}}" id="form_directorios" method="POST">
                 @csrf
                 <input type="hidden" name="id_category" id="category_id">
@@ -63,7 +63,7 @@
         </div>
 
 
-        <div class="table-responsive" id="lists" style="display:none">
+        <div class="table-responsive" id="lists" >
             <table id="list" class="table table-striped shadow-lg mt-4" style="width:100%;">
                 <thead >
                     <tr>
@@ -75,7 +75,7 @@
                 <tbody>
                     @foreach ($categories as $category)
                         <tr>
-                            <td width="5%"><img src="vendor/adminlte/dist/img/icons/folder{{ $category->contenido }}.png" width="95%" heigth="95%"></td>
+                            <td width="5%"><a><img src="vendor/adminlte/dist/img/icons/folder{{ $category->contenido }}.png" width="95%" heigth="95%"></a></td>
                             <form action="{{route('dashboard')}}" method="POST">
                                 @csrf
                                 <input type="hidden" value="{{$category->id}}" name="id_category">

@@ -58,6 +58,7 @@ Route::resource('downloads', DownloadController::class);
 
 
 Route::post('/dashboard/list_files', 'App\Http\Controllers\DashController@list_files')->name('dashboard.list_files');
+Route::post('/dashboard/list_folders', 'App\Http\Controllers\DashController@list_folders')->name('dashboard.list_folders');
 Route::post('/dashboard/delete_files', 'App\Http\Controllers\DashController@delete_files')->name('dashboard.delete_files');
 Route::post('/dashboard/edit_files', 'App\Http\Controllers\DashController@edit_files')->name('dashboard.edit_files');
 Route::post('/dashboard/details', 'App\Http\Controllers\DashController@details')->name('dashboard.details');
