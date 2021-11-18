@@ -462,7 +462,7 @@ function EditFolder(id){
             document.getElementById("btnEditFolder").style.display="";
             $.each(posts, function() {
                 $('#editfolder_id').val(this.id);
-                $('#editfolder_name').val(this.name);
+                $('#editfolder_name').val(this.name_uiscloud);
             });
             $('#editFolderModal').modal('toggle');
         }   
@@ -490,15 +490,14 @@ $('#formedit_folder').on('submit', function(e) {
                 $('#overlay').show();
             },
             success:function(resp){
-                alert(resp);
-                /*if(resp == "actualizado"){
+                if(resp == "actualizado"){
                     setTimeout(function(){
                     toastr.success('La carpeta fue modificada correctamente', 'Actualizar carpeta', {timeOut:3000});
                     location.reload();
                     });
                 }else{
                     toastr.warning('La carpeta no puede ser modificada porque existen archivos en su contenido', 'Actualizar carpeta', {timeOut:3000});
-                }*/
+                }
             }
         });
     }else{

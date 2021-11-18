@@ -89,7 +89,7 @@ class DashController extends Controller
             }
 
             $fold = Folder::where('id', '=', $folder_id)->get()->first();
-            $folder_name = $fold->name;
+            $folder_name = $fold->name_uiscloud;
             $url_folder = $fold->url;
 
 
@@ -210,7 +210,7 @@ class DashController extends Controller
             $item = [];
             $item['id'] = $folder->id;
             $item['contenido'] = $folder->contenido;
-            $item['name'] = $folder->name;
+            $item['name'] = $folder->name_uiscloud;
             $item['created_at'] = $folder->updated_at;
             $item['size'] = $folder->url;
             $item['type'] = "folder";
@@ -243,7 +243,8 @@ class DashController extends Controller
         ->addColumn('size', function ($items) {
             if($items['type']=="folder"){
                 $directorio=$items['size'];
-                $sizeArray= array(); //Arreglo donde se almacenarán los archivos para posteriormente sumarlas
+                $sizeArray= array(); 
+                //Arreglo donde se almacenarán los archivos para posteriormente sumarlas
                 //Se obtienen todos los archivos   
                 $archivos_array = Storage::disk('s3')->allFiles($directorio); 
                 //Se calcula el peso de cada archivo con una iteración almacenándolo en el array
@@ -252,6 +253,7 @@ class DashController extends Controller
                 }
                 //Se procene a crear una suma de todo el array, convertirla a megas y solo obtener los dos decimales
                 $html5=round((array_sum($sizeArray))/1048576, 2)." Mb";
+               // $html5="";
             }else{
                 $html5 = round(($items['size'])/1048576, 2)." Mb";
             }
@@ -259,8 +261,8 @@ class DashController extends Controller
         })
         ->addColumn('edit', function ($items) {
             if($items['type']=="folder"){
-                $html2 = "";
-                //$html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFolder('.$items['id'].')">Editar</a>';
+                //$html2 = "";
+                $html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFolder('.$items['id'].')">Editar</a>';
             }else{
                 $html2 = '<a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="EditFile('.$items['id'].')">Editar</a>';
             }
@@ -708,6 +710,7 @@ class DashController extends Controller
             //GUARDAR REGISTROS
             $folders = new Folder();
             $folders -> name = $folder_new;
+            $folders -> name_uiscloud = $folder_new;
             $folders -> url = $new_url;
             $folders -> contenido = '0';
             $folders -> nivel = $nivel;
@@ -763,9 +766,9 @@ class DashController extends Controller
             //LE PASO EL NOMBRE DE LA CARPETA
             $name_new = $request->name_editc;
 
-            $directories = Storage::allDirectories($directory);
-            /*/CREAR CARPETA(directorio) EN S3
-            if($contenido==0){
+            //$directories = Storage::allDirectories($directory);
+            //CREAR CARPETA(directorio) EN S3
+            /*if($contenido==0){
                 Storage::deleteDirectory($url_prev);
                 if($nivel==1){
                     $url=$directory."/".$name_new;
@@ -784,18 +787,18 @@ class DashController extends Controller
                     $cons_newfolder -> url = $url_new;
                     $cons_newfolder -> id_user = $current_user;
                     $cons_newfolder -> save();
-                }
+                }*/
                 //GUARDAR CAMBIOS
                 $folders = Folder::find($id_folder);
-                $folders -> name = $name_new;
+                $folders -> name_uiscloud = $name_new;
                 $folders -> id_user = $current_user;
                 $folders -> save();
 
                 return response("actualizado");
-            }else{
+            /*}else{
                 return response("noactualizado");
             }*/
-            return response($directories);
+            //return response($directories);
          }
     }
 
